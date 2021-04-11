@@ -1,9 +1,9 @@
 # Krótki opis aplikacji 'Planthood'
 
 Aplikacja, która umożliwia wymianę roślin między użytkownikami w bliskiej
-okolicy. Dodatkowo aplikacja ma przypominać użytkownikowi mailem o 
-zaplanowanej pielęgnacji posiadanych przez niego roślin. Aplikacja gromadzi też statystyki wymian z
-ostatnich dni/tygodni/miesięcy.
+okolicy. Dodatkowo aplikacja ma przypominać użytkownikowi mailem o zaplanowanej
+pielęgnacji posiadanych przez niego roślin. Aplikacja gromadzi też statystyki
+wymian z ostatnich dni/tygodni/miesięcy.
 
 # Wymagania
 
@@ -11,17 +11,21 @@ ostatnich dni/tygodni/miesięcy.
 
 Aplikacja powinna umożliwić:
 
+MUST HAVE
+
 * tworzenie wymian
 * modyfikowanie wymian
 * przegląd wymian
 
-CRUD dla modelu Wymiana
+COULD HAVE
+
+* usuwanie wymian
 
 Wymiana (Transaction):
 
 * nazwa (name)
 * opis (description)
-* zdjęcie (image) // lub roślina (plant, FK Plant)  
+* zdjęcie (image) // lub roślina (plant, FK Plant)
 * status (status)
 * użytkownik (creator, FK User)
 
@@ -29,16 +33,20 @@ Wymiana (Transaction):
 
 Aplikacja powinna umożliwić:
 
+MUST HAVE
+
 * tworzenie rośliny
 * modyfikowanie kwiatów
 * przegląd kwiatów
 
-CRUD dla modelu Roślina
+COULD HAVE
+
+* usuwanie roślin
 
 Roślina (Plant):
 
 * nazwa (name)
-* zdjęcie (image) ** opcjonalne  
+* zdjęcie (image) ** opcjonalne
 * opis (description) ** opcjonalne
 * ziemia (ground) ** opcjonalne
 * podlewanie (water) ** opcjonalne
@@ -48,24 +56,35 @@ Roślina (Plant):
 
 Aplikacja powinna umożliwiać:
 
+MUST HAVE
+
 * wysłanie (tworzenie) wiadomości
+
+WON'T HAVE
+
+* usunięcie wiadomości
 
 Wiadomość (Message):
 
 * nadawca (sender, FK User)
 * odbiorca (receiver, FK User)
-* wymiana (transaction, FK Transaction)  
+* wymiana (transaction, FK Transaction)
 * data utworzenia (created_at)
+
 
 ## Użytkownik
 
 Aplikacja powinna umożliwiać:
 
+MUST HAVE
+
 * utworzenie konta użytkownika
 * modyfikację konta użytkownika
 * przegląd konta użytkownika
 
-CRUD do modelu Użytkownik
+WON'T HAVE
+
+* usunięcie użytkownika
 
 Użytkownik (User):
 
@@ -74,16 +93,20 @@ Użytkownik (User):
 * email (email)
 * ulica (street)
 
+
 ## Przypomnienie
 
 Aplikacja powinna umożliwiać:
 
+MUST HAVE
+
 * utworzenie przypomnienia
 * modyfikowanie przypomnienia
-* usunięcie przypomnienia
 * przegląd przypomnień
 
-CRUD do modelu Przypomnienie
+SHOULD HAVE
+
+* usunięcie przypomnienia
 
 Przypomnienie (Reminder):
 
@@ -94,7 +117,18 @@ Przypomnienie (Reminder):
 
 ## Statystyki
 
-???
+System umożliwia generowanie agregatów transakcji oraz roślin:
+
+* dziennie
+* tygodniowo
+
+SHOULD HAVE
+
+* dodane transakcje i rośliny
+
+COULD HAVE
+
+* zakończone transakcje
 
 ## TBD
 
