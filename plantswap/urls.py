@@ -6,6 +6,8 @@ app_name = 'plantswap'
 
 urlpatterns = [
     path('plants/', views.PlantListView.as_view(), name='plant-list'),
+    path('plants/detail/<int:pk>/', views.PlantDetailView.as_view(),
+         name='plant-detail'),
     path('plants/edit/<int:pk>/', views.PlantUpdateView.as_view(),
          name='plant-edit'),
     path('plants/new/', views.PlantCreateView.as_view(), name='plant-add'),

@@ -1,7 +1,9 @@
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
+    DetailView,
     ListView,
+    TemplateView,
     UpdateView,
 )
 
@@ -11,13 +13,23 @@ from .forms import (
 )
 from .models import (
     Plant,
-    Transaction)
+    Transaction,
+)
+
+
+class MainView(TemplateView):
+    template_name = 'index.html'
 
 
 class PlantCreateView(CreateView):
     model = Plant
     form_class = PlantForm
     success_url = reverse_lazy('plant-list')
+
+
+class PlantDetailView(DetailView):
+    model = Plant
+    pk_url_kwarg = 'pk'
 
 
 class PlantListView(ListView):

@@ -1,4 +1,7 @@
 from django.db import models
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class Plant(models.Model):
@@ -6,12 +9,12 @@ class Plant(models.Model):
     description = models.TextField(null=True)
     photo = models.ImageField(upload_to='plants', null=True)
     amount = models.SmallIntegerField(default=0)
+    created_at = models.DateField(auto_now_add=True)
 
-    # zdjęcie (image) ** opcjonalne
-    # opis (description) ** opcjonalne
+    # owner = models.ForeignKey(User)
+
     # ziemia (ground) ** opcjonalne
     # podlewanie (water) ** opcjonalne
-    # właściciel (owner, FK User)
 
     def __str__(self):
         return self.name
@@ -28,6 +31,7 @@ class Transaction(models.Model):
     description = models.TextField()
     plant = models.ManyToManyField(Plant)
     status = models.IntegerField(choices=STATUS_CHOICE)
+    created_at = models.DateField(auto_now_add=True)
 
     # tworca(creator, FK User)
 
