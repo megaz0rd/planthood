@@ -1,7 +1,6 @@
 from django import forms
 from django.utils import timezone
 
-from planthood import settings
 from .models import Plant, Transaction, Reminder
 
 
@@ -29,7 +28,6 @@ class TransactionForm(forms.ModelForm):
 
 class ReminderForm(forms.ModelForm):
     previous_care_day = forms.DateField(
-        input_formats=settings.DATE_INPUT_FORMATS,
         widget=forms.SelectDateWidget(),
         initial=timezone.now
     )

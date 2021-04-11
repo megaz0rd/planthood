@@ -1,13 +1,10 @@
-from dateutil.relativedelta import relativedelta
-from django.utils.datetime_safe import date
 from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.views import APIView
 
 from plantswap.models import Plant, Transaction
 from plantswap.serializers import PlantSerializer, TransactionSerializer
-
-week_early = date.today() - relativedelta(days=7)
+from plantswap_api.utils import week_earlier, this_month, today
 
 
 class PlantViewSet(viewsets.ModelViewSet):
@@ -33,7 +30,10 @@ class StatsView(APIView):
             "plants": {
                 'total': Plant.objects.count(),
                 'last week': Plant.objects.filter(
-                    created_at__gte=week_early).count()
-            }
+                    created_at__gte=week_earlier).count(),
+                'this month': Plant.objects.filter(
+                    created_at__gte=this_month).count(),
+            },
+            "generation_date": today
         }
         return Response(data=stats_data)
