@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %} Rośliny w okolicy {% endblock %}
+
+{% block page_header %}
+    <h2>Twoje wymiany</h2>
+{% endblock page_header %}
+
+{% block content %}
+
+{% for transaction in transactions %}
+
+    <li>nazwa: {{ transaction.name }}</li>
+    <li>opis: {{ transaction.description }}</li>
+    <li>status: {{ transaction.get_status_display }}</li>
+
+    {% for detail in transaction.plant.values %}
+        {{ detail.name }}
+        <img src="{{ detail.photo.url }}">
+    {% endfor %}
+<br>
+<small><a href="{% url 'plantswap:transaction-edit' transaction.id %}">Edytuj
+    wymianę
+</a></small>
+{% empty %}
+Nie masz jeszcze żadnej dostępnej wymiany.
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %} Szczegóły rośliny {% endblock %}
+
+{% block page_header %}
+    <h2>Szczegóły rośliny</h2>
+{% endblock page_header %}
+
+{% block content %}
+
+{{ object.name }} <br>
+{{ object.description }} <br>
+{{ object.photo.url }} <br>
+{{ object.amount }} <br>
+
+{% endblock %}

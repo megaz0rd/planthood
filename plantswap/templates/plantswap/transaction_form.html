@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %} Dodaj/edytuj wymianę {% endblock %}
+
+{% block page_header %}
+    <h2>Twoja wymiana</h2>
+{% endblock page_header %}
+
+{% block content %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Dodaj wymianę">
+    </form>
+{% endblock %}
