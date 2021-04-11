@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %} Plantcare {% endblock %}
+
+{% block page_header %}
+    <h2>Ustaw przypomnienie</h2>
+{% endblock page_header %}
+
+{% block content %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Dodaj przypomnienie">
+    </form>
+{% endblock %}

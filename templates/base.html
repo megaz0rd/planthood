@@ -32,6 +32,9 @@
                     <li class="nav-item"><a class="nav-link"
                                             href="{% url 'plantswap:plant-list' %}">
                         Rośliny</a></li>
+                    <li class="nav-item"><a class="nav-link"
+                                            href="{% url 'plantswap:reminder-list' %}">
+                        Przypomnienia</a></li>
                 </ul>
                 <ul class="navbar-nav ml-auto">
                     {% if user.is_authenticated %}

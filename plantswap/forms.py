@@ -1,6 +1,8 @@
 from django import forms
+from django.utils import timezone
 
-from .models import Plant, Transaction
+from planthood import settings
+from .models import Plant, Transaction, Reminder
 
 
 class PlantForm(forms.ModelForm):
@@ -12,12 +14,6 @@ class PlantForm(forms.ModelForm):
             'photo',
             'amount'
         ]
-        labels = {
-            'name': 'Nazwa',
-            'description': 'Opis',
-            'photo': 'Wybierz zdjęcie',
-            'amount': 'Liczba sztuk'
-        }
 
 
 class TransactionForm(forms.ModelForm):
@@ -29,8 +25,20 @@ class TransactionForm(forms.ModelForm):
             'plant',
             'status'
         ]
-        labels = {
-            'name': 'Nazwa',
-            'description': 'Opis',
-            'plant': 'Roślina',
-        }
+
+
+class ReminderForm(forms.ModelForm):
+    previous_care_day = forms.DateField(
+        input_formats=settings.DATE_INPUT_FORMATS,
+        widget=forms.SelectDateWidget(),
+        initial=timezone.now
+    )
+
+    class Meta:
+        model = Reminder
+        fields = [
+            'name',
+            'plant',
+            'previous_care_day',
+            'cycle'
+        ]

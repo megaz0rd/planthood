@@ -9,11 +9,11 @@ from django.views.generic import (
 
 from .forms import (
     PlantForm,
-    TransactionForm,
+    TransactionForm, ReminderForm,
 )
 from .models import (
     Plant,
-    Transaction,
+    Transaction, Reminder,
 )
 
 
@@ -60,3 +60,14 @@ class TransactionUpdateView(UpdateView):
     form_class = TransactionForm
     pk_url_kwarg = 'pk'
     success_url = reverse_lazy('transaction-list')
+
+
+class ReminderCreateView(CreateView):
+    model = Reminder
+    form_class = ReminderForm
+    success_url = reverse_lazy('reminder-list')
+
+
+class ReminderListView(ListView):
+    model = Reminder
+    context_object_name = 'reminders'

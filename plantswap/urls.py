@@ -17,4 +17,8 @@ urlpatterns = [
          name='transaction-edit'),
     path('transactions/new/', views.TransactionCreateView.as_view(),
          name='transaction-add'),
+    path('reminders/', views.ReminderListView.as_view(),
+         name='reminder-list'),
+    path('reminders/new/', views.ReminderCreateView.as_view(),
+         name='reminder-add'),
 ]
