@@ -8,6 +8,14 @@
 
 {% block content %}
 
+{% if messages %}
+    <div class="alert alert-success">
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+    </div>
+{% endif %}
+
 {% for transaction in transactions %}
 
     <li>nazwa: {{ transaction.name }}</li>

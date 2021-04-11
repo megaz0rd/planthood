@@ -10,7 +10,7 @@ User = get_user_model()
 class Plant(models.Model):
     name = models.CharField(max_length=64)
     description = models.TextField(null=True)
-    photo = models.ImageField(upload_to='plants', null=True)
+    photo = models.ImageField(upload_to='plants', blank=True)
     amount = models.SmallIntegerField(default=0)
     created_at = models.DateField(auto_now_add=True)
 
@@ -42,11 +42,11 @@ class Reminder(models.Model):
     previous_care_day = models.DateField()
     cycle = models.SmallIntegerField(default=7)
 
-    # field not visible for user
-    next_care_day = models.DateField()
+    # # field not visible for user
+    # next_care_day = models.DateField()
 
     def __str__(self):
-        return self.plant.name + self.name
+        return self.plant.name + ' ' + self.name
 
 # class UserProfile(models.Model):
 #     user = models.OneToOneField(User, on_delete=models.CASCADE)
