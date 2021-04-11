@@ -31,9 +31,11 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     # my apps
     'plantswap',
+    'plantswap_api',
 
     # 3rd part apps
     'bootstrap4',
+    'rest_framework',
 
     # default apps
     'django.contrib.admin',

@@ -5,7 +5,7 @@ from rest_framework import viewsets
 from rest_framework.views import APIView
 
 from plantswap.models import Plant, Transaction
-from plantswap.serializers import PlantSerializer, TransactionSerializerg
+from plantswap.serializers import PlantSerializer, TransactionSerializer
 
 week_early = date.today() - relativedelta(days=7)
 

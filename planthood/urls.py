@@ -16,8 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from plantswap.views import MainView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('api/', include('plantswap_api.urls')),
     path('', include('plantswap.urls')),
+    path('', MainView.as_view(), name='index'),
 ]
