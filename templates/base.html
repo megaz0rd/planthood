@@ -17,7 +17,7 @@
         <nav class="navbar navbar-expand-md navbar-light bg-light mb-4 border">
 
             <a class="navbar-brand"
-               href="{% url 'plantswap:plant-list' %}">Planthood</a>
+               href="{% url 'index' %}">Planthood</a>
 
             <button class="navbar-toggler" type="button" data-toggle="collapse"
                     data-target="#navbarCollapse" aria-controls="navbarCollapse"
@@ -29,6 +29,9 @@
                     <li class="nav-item"><a class="nav-link"
                                             href="{% url 'plantswap:transaction-list' %}">
                         Wymiany</a></li>
+                    <li class="nav-item"><a class="nav-link"
+                                            href="{% url 'plantswap:plant-list' %}">
+                        Rośliny</a></li>
                 </ul>
                 <ul class="navbar-nav ml-auto">
                     {% if user.is_authenticated %}
@@ -37,12 +40,12 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'logout' %}">
-                            Log out</a>
+                            Wyloguj</a>
                     </li>
                     {% else %}
                     <li class="nav-item">
                         <a class="nav-link"
-                           href="{% url 'login' %}">Log in</a>
+                           href="{% url 'login' %}">Zaloguj</a>
                     </li>
                     {% endif %}
                 </ul>
