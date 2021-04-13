@@ -1,8 +1,8 @@
 from django.db import models
+from django.urls import reverse_lazy
 from django.contrib.auth import get_user_model
 
 from plantswap.constant import CARE_TYPE, STATUS_CHOICE
-from plantswap_api.utils import today
 
 User = get_user_model()
 
@@ -11,7 +11,6 @@ class Plant(models.Model):
     name = models.CharField(max_length=64)
     description = models.TextField(null=True)
     photo = models.ImageField(upload_to='plants', blank=True)
-    amount = models.SmallIntegerField(default=0)
     created_at = models.DateField(auto_now_add=True)
 
     # owner = models.ForeignKey(User)
@@ -22,12 +21,16 @@ class Plant(models.Model):
     def __str__(self):
         return self.name
 
+    # def get_absolute_url(self):
+    #     return reverse_lazy('plantswap:plant-detail', args=[str(self.pk)])
+
 
 class Transaction(models.Model):
     name = models.CharField(max_length=128)
     description = models.TextField()
     plant = models.ManyToManyField(Plant)
     status = models.IntegerField(choices=STATUS_CHOICE)
+    amount = models.SmallIntegerField(default=0)
     created_at = models.DateField(auto_now_add=True)
 
     # tworca(creator, FK User)
@@ -48,7 +51,8 @@ class Reminder(models.Model):
     def __str__(self):
         return self.plant.name + ' ' + self.name
 
-# class UserProfile(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE)
-#     street = models.CharField(max_length=64)
-#     building_number = models.CharField(max_length=8)
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    street = models.CharField(max_length=64)
+    building_number = models.CharField(max_length=8)

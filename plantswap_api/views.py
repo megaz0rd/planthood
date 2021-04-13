@@ -23,9 +23,8 @@ class StatsView(APIView):
         stats_data = {
             "transactions": {
                 "total": Transaction.objects.count(),
-                "sell": Transaction.objects.filter(status=1).count(),
-                "exchange": Transaction.objects.filter(status=2).count(),
-                "free": Transaction.objects.filter(status=3).count(),
+                "to_give": Transaction.objects.filter(status=1).count(),
+                "want": Transaction.objects.filter(status=2).count(),
             },
             "plants": {
                 'total': Plant.objects.count(),

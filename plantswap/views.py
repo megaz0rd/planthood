@@ -10,11 +10,14 @@ from django.views.generic import (
 
 from .forms import (
     PlantForm,
-    TransactionForm, ReminderForm,
+    TransactionForm,
+    ReminderForm,
+    UserRegisterForm,
 )
 from .models import (
     Plant,
-    Transaction, Reminder,
+    Transaction,
+    Reminder,
 )
 
 
@@ -47,15 +50,19 @@ class PlantListView(ListView):
 
     model = Plant
     context_object_name = 'plants'
+    ordering = 'id'
 
 
-class PlantUpdateView(UpdateView):
+class PlantUpdateView(SuccessMessageMixin, UpdateView):
     """Powers a form to update an existing plant"""
 
     model = Plant
     pk_url_kwarg = 'pk'
     form_class = PlantForm
     success_url = reverse_lazy('plantswap:plant-list')
+
+    def get_success_message(self, cleaned_data):
+        return "Roślina pomyślnie zaktualizowana!"
 
 
 class TransactionCreateView(SuccessMessageMixin, CreateView):
@@ -76,13 +83,16 @@ class TransactionListView(ListView):
     context_object_name = 'transactions'
 
 
-class TransactionUpdateView(UpdateView):
+class TransactionUpdateView(SuccessMessageMixin, UpdateView):
     """Powers a form to update an existing transaction"""
 
     model = Transaction
     form_class = TransactionForm
     pk_url_kwarg = 'pk'
     success_url = reverse_lazy('plantswap:transaction-list')
+
+    def get_success_message(self, cleaned_data):
+        return "Wymiana pomyślnie zaktualizowana!"
 
 
 class ReminderCreateView(SuccessMessageMixin, CreateView):
@@ -101,3 +111,13 @@ class ReminderListView(ListView):
 
     model = Reminder
     context_object_name = 'reminders'
+
+
+class SignUpView(SuccessMessageMixin, CreateView):
+
+    template_name = 'registration/register.html'
+    form_class = UserRegisterForm
+    success_url = reverse_lazy('login')
+
+    def get_success_message(self, cleaned_data):
+        return "Konto pomyślnie utworzone!"
