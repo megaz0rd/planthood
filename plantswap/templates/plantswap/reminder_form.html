@@ -1,15 +1,30 @@
 {% extends 'base.html' %}
+{% load bootstrap4 %}
 
-{% block title %} Plantcare {% endblock %}
+{% block title %}
+    {% if not object.pk %}
+        Utwórz przypomnienie
+    {% else %}
+        Edytuj przypomnienie
+    {% endif %}
+{% endblock %}
 
 {% block page_header %}
-    <h2>Ustaw przypomnienie</h2>
+    <h2>Twoje przypomnienie</h2>
 {% endblock page_header %}
 
 {% block content %}
     <form action="" method="POST">
         {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Dodaj przypomnienie">
+        {% bootstrap_form form %}
+        {% buttons %}
+        <button type="submit" class="btn btn-primary">
+            {% if not object.pk %}
+                Dodaj przypomnienie
+            {% else %}
+                Zapisz zmiany
+            {% endif %}
+        </button>
+        {% endbuttons %}
     </form>
 {% endblock %}

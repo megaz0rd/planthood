@@ -7,9 +7,13 @@
 
 {% block content %}
 
-  {% if form.errors %}
-    <p>Nazwa użytkownika i hasło nie są poprawne. Spróbuj ponownie.</p>
-  {% endif %}
+    {% if messages %}
+        <div class="alert alert-success">
+            {% for message in messages %}
+            {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
 
     <form action="{% url 'login' %}" method="POST" class="form">
         {% csrf_token %}

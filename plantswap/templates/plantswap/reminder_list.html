@@ -16,6 +16,11 @@
     </div>
 {% endif %}
 
+    <p>
+        <a href="{% url 'plantswap:reminder-add' %}">Dodaj nowe
+            przypomnienie</a>
+    </p>
+
 {% for reminder in reminders %}
 
     <li>nazwa: {{ reminder.get_name_display }}</li>

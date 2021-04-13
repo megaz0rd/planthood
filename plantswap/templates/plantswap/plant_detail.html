@@ -10,7 +10,8 @@
 
 {{ object.name }} <br>
 {{ object.description }} <br>
-{{ object.photo.url }} <br>
-{{ object.amount }} <br>
+{% if object.photo %}
+ {{ object.photo.url }} <br>
+{% endif %}
 
 {% endblock %}

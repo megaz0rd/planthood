@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
+{% load bootstrap4 %}
 
-{% block title %} Dodaj/edytuj roślinę {% endblock %}
+{% block title %}
+    {% if not object.pk %}
+        Dodaj roślinę
+    {% else %}
+        Edytuj roślinę
+    {% endif %}
+{% endblock %}
 
 {% block page_header %}
     <h2>Twoja roślina</h2>
@@ -9,7 +16,15 @@
 {% block content %}
     <form action="" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Dodaj roślinę">
+        {% bootstrap_form form %}
+        {% buttons %}
+        <button type="submit" class="btn btn-primary">
+            {% if not object.pk %}
+                Dodaj roślinę
+            {% else %}
+                Zapisz zmiany
+            {% endif %}
+        </button>
+        {% endbuttons %}
     </form>
 {% endblock %}

@@ -8,29 +8,38 @@
 
 {% block content %}
 
-{% if messages %}
-    <div class="alert alert-success">
-        {% for message in messages %}
-        {{ message }}
-        {% endfor %}
-    </div>
-{% endif %}
+    {% if messages %}
+        <div class="alert alert-success">
+            {% for message in messages %}
+            {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
 
-{% for transaction in transactions %}
+    <p>
+        <a href="{% url 'plantswap:transaction-add' %}">Dodaj nową
+            wymianę</a>
+    </p>
+
+    {% for transaction in transactions %}
 
     <li>nazwa: {{ transaction.name }}</li>
     <li>opis: {{ transaction.description }}</li>
+    <li>ilość: {{ transaction.amount }}</li>
     <li>status: {{ transaction.get_status_display }}</li>
 
-    {% for detail in transaction.plant.values %}
-        {{ detail.name }}
-        <img src="{{ detail.photo.url }}">
+        {% for detail in transaction.plant.values %}
+
+            {{ detail.name }}
+            <img src="{{ detail.photo.url }}">
+
+        {% endfor %}
+    <br>
+    <small>
+        <a href="{% url 'plantswap:transaction-edit' transaction.id %}">
+        Edytuj wymianę </a>
+    </small>
+    {% empty %}
+        Nie masz jeszcze żadnej dostępnej wymiany.
     {% endfor %}
-<br>
-<small><a href="{% url 'plantswap:transaction-edit' transaction.id %}">Edytuj
-    wymianę
-</a></small>
-{% empty %}
-Nie masz jeszcze żadnej dostępnej wymiany.
-{% endfor %}
 {% endblock %}
