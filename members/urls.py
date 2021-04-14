@@ -1,0 +1,11 @@
+from django.urls import path
+
+from members import views
+
+urlpatterns = [
+    path('register/', views.UserRegisterView.as_view(),
+         name='register'),
+    path('edit_profile/', views.UserEditView.as_view(),
+         name='edit-profile'),
+    path('password/', views.UserPasswordChangeView.as_view()),
+]
