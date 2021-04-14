@@ -1,6 +1,5 @@
 from django import forms
-from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm
+
 from django.utils import timezone
 
 from .models import Plant, Transaction, Reminder
@@ -42,11 +41,3 @@ class ReminderForm(forms.ModelForm):
             'previous_care_day',
             'cycle'
         ]
-
-
-class UserRegisterForm(UserCreationForm):
-    email = forms.EmailField()
-
-    class Meta:
-        model = get_user_model()
-        fields = ['username', 'email', 'first_name']

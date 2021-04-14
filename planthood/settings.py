@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     # my apps
     'plantswap',
     'plantswap_api',
+    'members',
 
     # 3rd part apps
     'bootstrap4',

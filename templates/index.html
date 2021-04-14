@@ -1,6 +1,16 @@
 {% extends "base.html" %}
 
 {% block page_header %}
+{% endblock page_header %}
+{% block content %}
+    {% if messages %}
+        <div class="alert alert-success">
+            {% for message in messages %}
+            {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <div class="jumbotron">
         <h1 class="display-3">Adoptuj roślinę z sąsiedztwa!</h1>
 
@@ -18,4 +28,4 @@
            role="button">Załóż konto &raquo;</a>
     {% endif %}
     </div>
-{% endblock page_header %}
+{% endblock content %}

@@ -12,7 +12,6 @@ from .forms import (
     PlantForm,
     TransactionForm,
     ReminderForm,
-    UserRegisterForm,
 )
 from .models import (
     Plant,
@@ -111,13 +110,3 @@ class ReminderListView(ListView):
 
     model = Reminder
     context_object_name = 'reminders'
-
-
-class SignUpView(SuccessMessageMixin, CreateView):
-
-    template_name = 'registration/register.html'
-    form_class = UserRegisterForm
-    success_url = reverse_lazy('login')
-
-    def get_success_message(self, cleaned_data):
-        return "Konto pomyślnie utworzone!"

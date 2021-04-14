@@ -1,10 +1,7 @@
 from django.db import models
 from django.urls import reverse_lazy
-from django.contrib.auth import get_user_model
 
 from plantswap.constant import CARE_TYPE, STATUS_CHOICE
-
-User = get_user_model()
 
 
 class Plant(models.Model):
@@ -50,9 +47,3 @@ class Reminder(models.Model):
 
     def __str__(self):
         return self.plant.name + ' ' + self.name
-
-
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    street = models.CharField(max_length=64)
-    building_number = models.CharField(max_length=8)
