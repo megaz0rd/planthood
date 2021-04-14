@@ -17,16 +17,12 @@ from django.contrib import admin
 from django.urls import path, include
 
 from plantswap import views
-from members import views as profile_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/', include('members.urls')),
     path('api/', include('plantswap_api.urls')),
     path('', include('plantswap.urls')),
     path('', views.MainView.as_view(), name='index'),
-    path('register/', profile_views.UserRegisterView.as_view(),
-         name='register'),
-    path('edit_profile/', profile_views.UserEditView.as_view(),
-         name='edit-profile'),
 ]
