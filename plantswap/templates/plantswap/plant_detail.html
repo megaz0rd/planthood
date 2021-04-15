@@ -11,7 +11,7 @@
 {{ object.name }} <br>
 {{ object.description }} <br>
 {% if object.photo %}
- {{ object.photo.url }} <br>
+ <img src="{{ object.photo.url }}"> <br>
 {% endif %}
 
 {% endblock %}

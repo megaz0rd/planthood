@@ -3,7 +3,11 @@
 {% block title %} Rośliny w okolicy {% endblock %}
 
 {% block page_header %}
-    <h2>Twoje wymiany</h2>
+    <h2>
+        Twoje wymiany
+        <a href="{% url 'plantswap:transaction-add' %}"
+           class="btn btn-sm btn-outline-secondary">Dodaj nową wymianę</a>
+    </h2>
 {% endblock page_header %}
 
 {% block content %}
@@ -16,29 +20,21 @@
         </div>
     {% endif %}
 
-    <p>
-        <a href="{% url 'plantswap:transaction-add' %}">Dodaj nową
-            wymianę</a>
-    </p>
-
     {% for transaction in transactions %}
-
-    <li>nazwa: {{ transaction.name }}</li>
-    <li>opis: {{ transaction.description }}</li>
-    <li>ilość: {{ transaction.amount }}</li>
-    <li>status: {{ transaction.get_status_display }}</li>
-
+    <ul class="list-unstyled">
+        <li>nazwa: {{ transaction.name }}</li>
+        <li>opis: {{ transaction.description }}</li>
+        <li>status: {{ transaction.get_status_display }}</li>
         {% for detail in transaction.plant.values %}
+        <div class="btn-group">
+            <a href="{% url 'plantswap:plant-detail' detail.id %}"
+               class="btn btn-sm btn-outline-secondary">{{ detail.name }}</a>
+            {% endfor %}
 
-            {{ detail.name }}
-            <img src="{{ detail.photo.url }}">
-
-        {% endfor %}
-    <br>
-    <small>
-        <a href="{% url 'plantswap:transaction-edit' transaction.id %}">
-        Edytuj wymianę </a>
-    </small>
+        <a href="{% url 'plantswap:transaction-edit' transaction.id %}"
+           class="btn btn-sm btn-outline-primary">Edytuj wymianę </a>
+        </div>
+    </ul>
     {% empty %}
         Nie masz jeszcze żadnej dostępnej wymiany.
     {% endfor %}

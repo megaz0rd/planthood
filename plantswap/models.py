@@ -7,7 +7,7 @@ from plantswap.constant import CARE_TYPE, STATUS_CHOICE
 class Plant(models.Model):
     name = models.CharField(max_length=64)
     description = models.TextField(null=True)
-    photo = models.ImageField(upload_to='plants', blank=True)
+    photo = models.ImageField(upload_to='plants/', null=True, blank=True)
     created_at = models.DateField(auto_now_add=True)
 
     # owner = models.ForeignKey(User)

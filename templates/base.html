@@ -2,72 +2,89 @@
 
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport"
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>{% block title %}{% endblock %} |
-            Planthood </title>
+    <title>{% block title %}{% endblock %} |
+        Planthood </title>
 
-            {% bootstrap_css %}
-            {% bootstrap_javascript jquery='full' %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript jquery='full' %}
 
-    </head>
-    <body>
-        <nav class="navbar navbar-expand-md navbar-light bg-light mb-4 border">
+</head>
+<body class="d-flex flex-column h-100">
+<nav class="navbar navbar-expand-md navbar-light bg-light mb-4 border">
 
-            <a class="navbar-brand"
-               href="{% url 'index' %}">Planthood</a>
+    <a class="navbar-brand"
+       href="{% url 'index' %}">Planthood</a>
 
-            <button class="navbar-toggler" type="button" data-toggle="collapse"
-                    data-target="#navbarCollapse" aria-controls="navbarCollapse"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span></button>
+    <button class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarCollapse" aria-controls="navbarCollapse"
+            aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span></button>
 
-            <div class="collapse navbar-collapse" id="navbarCollapse">
-                <ul class="navbar-nav mr-auto">
-                    {% if user.is_authenticated %}
-                    <li class="nav-item"><a class="nav-link"
-                                            href="{% url 'plantswap:transaction-list' %}">
-                        Wymiany</a></li>
-                    <li class="nav-item"><a class="nav-link"
-                                            href="{% url 'plantswap:plant-list' %}">
-                        Rośliny</a></li>
-                    <li class="nav-item"><a class="nav-link"
-                                            href="{% url 'plantswap:reminder-list' %}">
-                        Przypomnienia</a></li>
-                    {% endif %}
-                </ul>
-                <ul class="navbar-nav ml-auto">
-                    {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <span class="navbar-text">Witaj, {{ user.first_name }}.</span>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           href="{% url 'edit-profile' %}">Edytuj profil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">
-                            Wyloguj</a>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           href="{% url 'login' %}">Zaloguj</a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </nav>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+            {% if user.is_authenticated %}
+            <li class="nav-item"><a class="nav-link"
+                                    href="{% url 'plantswap:transaction-list' %}">
+                Wymiany</a></li>
+            <li class="nav-item"><a class="nav-link"
+                                    href="{% url 'plantswap:plant-list' %}">
+                Rośliny</a></li>
+            <li class="nav-item"><a class="nav-link"
+                                    href="{% url 'plantswap:reminder-list' %}">
+                Przypomnienia</a></li>
+            {% endif %}
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+                <span class="navbar-text">Witaj, {{ user.first_name }}.</span>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"
+                   href="{% url 'members:edit-profile' %}">Edytuj
+                    profil</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'logout' %}">
+                    Wyloguj</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link"
+                   href="{% url 'login' %}">Zaloguj</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
 
-        <main role="main" class="container">
-            <div class="pb-2 mb-2 border-bottom">
-                {% block page_header %}{% endblock page_header %}
-            </div>
-            <div>
-                {% block content %}{% endblock content %}
-            </div>
-        </main>
-    </body>
+<main role="main" class="container">
+    <div class="pb-2 mb-2 border-bottom">
+        {% block page_header %}{% endblock page_header %}
+    </div>
+    <div>
+        {% block content %}{% endblock content %}
+    </div>
+</main>
+
+{% block footer %}
+
+<footer class="text-muted py-5">
+    <div class="container">
+        <p class="float-end mb-1">
+            <a href="#">Wróć na początek</a>
+        </p>
+        <p class="mb-1">Created by <a href="https://github.com/megaz0rd/">
+            megaz0rd</a> in Django Framework, 2021</p>
+        <p class="mb-0">Layout &copy; Bootstrap</p>
+    </div>
+</footer>
+
+{% endblock %}
+
+</body>
 </html>

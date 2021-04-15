@@ -3,7 +3,12 @@
 {% block title %} Plantcare {% endblock %}
 
 {% block page_header %}
-    <h2>Twoje przypomnienia</h2>
+    <h2>
+        Twoje przypomnienia
+        <a href="{% url 'plantswap:reminder-add' %}"
+           class="btn btn-sm btn-outline-secondary">Dodaj nowe przypomnienie</a>
+    </h2>
+    </h2>
 {% endblock page_header %}
 
 {% block content %}
@@ -16,23 +21,17 @@
     </div>
 {% endif %}
 
-    <p>
-        <a href="{% url 'plantswap:reminder-add' %}">Dodaj nowe
-            przypomnienie</a>
-    </p>
-
 {% for reminder in reminders %}
-
-    <li>nazwa: {{ reminder.get_name_display }}</li>
-    {% for detail in reminder.plant.values %}
-        {{ detail.name }}
-        <img src="{{ detail.photo.url }}">
-    {% endfor %}
-    <li>poprzednia pielęgnacja: {{ reminder.previous_care_day }}</li>
-    <li>cykl: {{ reminder.cycle }}</li>
-
-<br>
-{% empty %}
-Nie masz jeszcze dodanych przypomnień.
+    <ul class="list-unstyled">
+        <li>rodzaj: {{ reminder.get_name_display }}</li>
+        {% for detail in reminder.plant.values %}
+            {{ detail.name }}
+            <img src="{{ detail.photo.url }}">
+        {% endfor %}
+        <li>poprzednia pielęgnacja: {{ reminder.previous_care_day }}</li>
+        <li>cykl: {{ reminder.cycle }}</li>
+    </ul>
+    {% empty %}
+        Nie masz jeszcze dodanych przypomnień.
 {% endfor %}
 {% endblock %}

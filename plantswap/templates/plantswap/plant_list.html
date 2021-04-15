@@ -3,7 +3,11 @@
 {% block title %} Twoje rośliny {% endblock %}
 
 {% block page_header %}
-<h2>Twoje rośliny</h2>
+    <h2>
+        Twoje rośliny
+        <a href="{% url 'plantswap:plant-add' %}"
+            class="btn btn-sm btn-outline-secondary">Dodaj nową roślinę</a>
+    </h2>
 {% endblock page_header %}
 
 {% block content %}
@@ -16,16 +20,20 @@
     </div>
 {% endif %}
 
-    <p>
-        <a href="{% url 'plantswap:plant-add' %}">Dodaj nową roślinę</a>
-    </p>
+<p>
 
-{% for plant in plants %}
+</p>
+
+
 <div class="album py-5 bg-light">
     <div class="container">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            {% for plant in plants %}
             <div class="col">
                 <div class="card shadow-sm">
+                    {% if plant.photo.url %}
+                    <img src="{{ plant.photo.url }}" width="100%" height="300">
+                    {% else %}
                     <svg class="bd-placeholder-img card-img-top" width="100%"
                          height="225" xmlns="http://www.w3.org/2000/svg"
                          role="img" aria-label="Placeholder: Thumbnail"
@@ -36,6 +44,7 @@
                             {{ plant.name }}
                         </text>
                     </svg>
+                    {% endif %}
                     <div class="card-body">
                         <p class="card-text">{{ plant.description }}</p>
                         <div class="d-flex justify-content-between align-items-center">
@@ -47,17 +56,16 @@
                                    class="btn btn-sm btn-outline-secondary">Edytuj
                                 </a>
                             </div>
+                            <small class="text-muted">{{ plant.name }}</small>
                         </div>
                     </div>
                 </div>
             </div>
+            {% empty %}
+                Nie masz jeszcze żadnej rośliny.
+            {% endfor %}
         </div>
     </div>
 </div>
-{% empty %}
-
-Nie masz jeszcze żadnej rośliny.
-
-{% endfor %}
 
 {% endblock %}
