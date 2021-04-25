@@ -30,6 +30,8 @@
         {% endfor %}
         <li>poprzednia pielęgnacja: {{ reminder.previous_care_day }}</li>
         <li>cykl: {{ reminder.cycle }}</li>
+        <li>następna pielęgnacja: {{ reminder.next_care_day }}</li>
+        <a href="{% url 'plantswap:reminder-edit' reminder.pk %}">Edytuj</a>
     </ul>
     {% empty %}
         Nie masz jeszcze dodanych przypomnień.

@@ -7,11 +7,25 @@
 {% endblock page_header %}
 
 {% block content %}
+    {% if messages %}
+        <div class="alert alert-success">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
 
 {{ object.name }} <br>
 {{ object.description }} <br>
 {% if object.photo %}
  <img src="{{ object.photo.url }}"> <br>
 {% endif %}
+
+{% for reminder in reminders %}
+    Data następnej pielęgnacji {{ reminder.get_name_display }}:
+{{ reminder.next_care_day }}
+{% endfor %}
+
+
 
 {% endblock %}

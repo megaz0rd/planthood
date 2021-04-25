@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %} Szczegóły rośliny {% endblock %}
+
+{% block page_header %}
+    <h2>Szczegóły transakcji</h2>
+{% endblock page_header %}
+
+{% block content %}
+
+{{ object.message.all }}
+
+{% for detail in object.plant.all %}
+
+<br>
+    {% if detail.plant.status == 1 %}
+        {% if object.to_user == user %}
+            Możesz wziąć {{ detail.plant }} od {{ object.from_user }}
+        {% else %}
+            {{ object.to_user }} chce wziąć od Ciebie {{ detail.plant }}
+        {% endif %}
+    {% elif detail.plant.status == 2 %}
+        {% if object.from_user == user %}
+            Możesz dać {{ detail.plant }} dla {{ object.to_user }}
+        {% else %}
+            {{ object.from_user }} oferuje Ci {{ detail.plant }}
+        {% endif %}
+    {% endif %}
+
+    <a href="{% url 'plantswap:message' detail.pk %}">Skontaktuj się</a>
+<br>
+{% for message in object.message.all %}
+{% empty %}
+    Nie wymieniliście jeszcze między sobą wiadomości.
+{% endfor %}
+
+{% endfor %}
+
+{% endblock %}

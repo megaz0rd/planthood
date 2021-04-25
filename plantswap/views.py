@@ -1,112 +1,250 @@
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    UserPassesTestMixin
+)
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Q
 from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import (
     CreateView,
     DetailView,
+    FormView,
     ListView,
-    TemplateView,
     UpdateView,
 )
 
 from .forms import (
     PlantForm,
-    TransactionForm,
     ReminderForm,
+    MessageForm,
 )
 from .models import (
     Plant,
+    Match,
     Transaction,
     Reminder,
+    Message,
 )
 
 
-class MainView(TemplateView):
-    """Shows landing page"""
-
+class MainView(ListView):
+    """
+    Shows landing page if user is not authenticated else page with the
+    plants available to take, exclude those items owned by self.request.user.
+    """
+    model = Plant
+    context_object_name = 'plants'
     template_name = 'index.html'
+    paginate_by = 18
+
+    def get_queryset(self):
+        """
+        If user is not authenticated shows landing page with create
+        account button.
+        """
+        if not self.request.user.is_authenticated:
+            return super().get_queryset()
+        else:
+            search_query = self.request.GET.get('q')
+            if search_query:
+                """Returns query results if none returns all objects."""
+                return self.model.objects.filter(
+                    name__icontains=search_query
+                ).filter(status__in=[1, 2]
+                         ).exclude(
+                    owner=self.request.user)
+            else:
+                return self.model.objects.filter(
+                    status__in=[1, 2]
+                ).exclude(owner=self.request.user)
 
 
-class PlantCreateView(SuccessMessageMixin, CreateView):
-    """Powers a form to create a new plant"""
+class PlantCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    """Powers a form to create a new plant."""
 
     model = Plant
     form_class = PlantForm
-    success_url = reverse_lazy('plantswap:plant-list')
+
+    def form_valid(self, form, *args, **kwargs):
+        """Fills owner field in the model's instance."""
+        form.instance.owner = self.request.user
+        return super(PlantCreateView, self).form_valid(form)
 
     def get_success_message(self, cleaned_data):
         return "Roślina dodana!"
 
 
-class PlantDetailView(DetailView):
-    """Shows users a single plant"""
+class PlantDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    """Shows user a single plant."""
 
     model = Plant
     pk_url_kwarg = 'pk'
 
+    def get_context_data(self, **kwargs):
+        context = super(PlantDetailView, self).get_context_data(**kwargs)
+        reminders = self.get_object().reminder_set.all()
+        context['reminders'] = reminders
+        return context
 
-class PlantListView(ListView):
-    """Shows users a single plant"""
+    def test_func(self):
+        """Prevent request.user access to adopted plant which user is no
+        longer an owner or never was"""
+        if self.get_object().status != 3:
+            return self.request.user == self.get_object().owner or \
+                   self.request.user != self.get_object().owner
+        else:
+            return self.request.user == self.get_object().owner
+
+
+class PlantListView(LoginRequiredMixin, ListView):
+    """Shows user plants that user owns."""
 
     model = Plant
     context_object_name = 'plants'
-    ordering = 'id'
+
+    def get_queryset(self):
+        return self.model.objects.filter(owner=self.request.user)
 
 
-class PlantUpdateView(SuccessMessageMixin, UpdateView):
-    """Powers a form to update an existing plant"""
+class PlantUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    """Powers a form to update an existing plant."""
 
     model = Plant
     pk_url_kwarg = 'pk'
     form_class = PlantForm
-    success_url = reverse_lazy('plantswap:plant-list')
 
     def get_success_message(self, cleaned_data):
         return "Roślina pomyślnie zaktualizowana!"
 
 
-class TransactionCreateView(SuccessMessageMixin, CreateView):
-    """Powers a form to create a new transaction"""
+class MessageSendView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = Message
+    form_class = MessageForm
+    success_url = reverse_lazy('index')
 
-    model = Transaction
-    form_class = TransactionForm
-    success_url = reverse_lazy('plantswap:transaction-list')
+    def get_initial(self, **kwargs):
+        match = Match.objects.get(pk=self.kwargs['pk'])
+        if self.request.user == match.plant.owner:
+            initial = {
+                'match': match,
+                'from_user': match.plant.owner,
+                'to_user': match.user
+            }
+        else:
+            initial = {
+                'match': match,
+                'from_user': match.user,
+                'to_user': match.plant.owner
+            }
+        return initial
+
+    def form_valid(self, form):
+        message = form.save(commit=False)
+        message.send_email()
+
+        return super().form_valid(form)
 
     def get_success_message(self, cleaned_data):
-        return "Wymiana dodana!"
+        return "Wiadomość została wysłana!"
 
 
-class TransactionListView(ListView):
-    """Shows users a list of transactions"""
+class TransactionDetailView(LoginRequiredMixin, UserPassesTestMixin,
+                            DetailView):
+    """Shows user a single plant."""
+
+    model = Transaction
+    pk_url_kwarg = 'pk'
+
+    def test_func(self):
+        """Prevent request.user access to transaction which user is not a
+        part of"""
+        return self.request.user == self.get_object().to_user or \
+               self.request.user == self.get_object().from_user
+
+
+class TransactionListView(LoginRequiredMixin, ListView):
+    """Shows user a list of transactions"""
 
     model = Transaction
     context_object_name = 'transactions'
 
-
-class TransactionUpdateView(SuccessMessageMixin, UpdateView):
-    """Powers a form to update an existing transaction"""
-
-    model = Transaction
-    form_class = TransactionForm
-    pk_url_kwarg = 'pk'
-    success_url = reverse_lazy('plantswap:transaction-list')
-
-    def get_success_message(self, cleaned_data):
-        return "Wymiana pomyślnie zaktualizowana!"
+    def get_queryset(self):
+        return self.model.objects.filter(
+            Q(to_user=self.request.user) |
+            Q(from_user=self.request.user)
+        )
 
 
-class ReminderCreateView(SuccessMessageMixin, CreateView):
+class ReminderCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     """Powers a form to create a new reminder"""
 
     model = Reminder
     form_class = ReminderForm
     success_url = reverse_lazy('plantswap:reminder-list')
 
+    def get_form_kwargs(self):
+        """
+        Passes the request object to the form class. This is necessary to
+        only display in select field plants that belong to a given user.
+        """
+        kwargs = super(ReminderCreateView, self).get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
     def get_success_message(self, cleaned_data):
         return "Przypomnienie dodane!"
 
 
-class ReminderListView(ListView):
-    """Shows users a list of reminders"""
+class ReminderListView(LoginRequiredMixin, ListView):
+    """Shows users a list of reminders."""
 
     model = Reminder
     context_object_name = 'reminders'
+
+    def get_queryset(self):
+        return self.model.objects.filter(creator=self.request.user)
+
+
+class ReminderUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    """Powers a form to update an existing reminder."""
+
+    model = Reminder
+    form_class = ReminderForm
+    pk_url_kwarg = 'pk'
+    success_url = reverse_lazy('plantswap:reminder-list')
+
+    def get_form_kwargs(self):
+        """
+        Passes the request object to the form class. This is necessary to
+        only display in select field plants that belong to a given user.
+        """
+        kwargs = super(ReminderUpdateView, self).get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
+    def get_success_message(self, cleaned_data):
+        return "Przypomnienie pomyślnie zaktualizowane!"
+
+
+def add_to_transaction(request, pk):
+    plant = get_object_or_404(Plant, pk=pk)
+    match_query = Match.objects.filter(
+        user=request.user).filter(plant=plant)
+    if match_query.exists():
+        return redirect('plantswap:message', pk=match_query[0].pk)
+    else:
+        match = Match.objects.create(
+            user=request.user,
+            plant=plant
+        )
+        if plant.status == 1:
+            transaction = Transaction.objects.create(from_user=plant.owner,
+                                                     to_user=request.user)
+            transaction.plant.add(match)
+            return redirect('plantswap:message', pk=match.id)
+        elif plant.status == 2:
+            transaction = Transaction.objects.create(to_user=plant.owner,
+                                                     from_user=request.user)
+            transaction.plant.add(match)
+            return redirect('plantswap:message', pk=match.id)

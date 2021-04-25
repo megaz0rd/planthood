@@ -124,6 +124,16 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
+# Email settings
+EMAIL_HOST = 'smtp.gmail.com'  # 'localhost'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'planthood.mokotow@gmail.com'
+EMAIL_HOST_PASSWORD = 'dkzkncjxqsrfrchc'
+EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = False
+
+# Local settings
+
 try:
     from planthood.local_settings import DATABASES
 except ModuleNotFoundError:

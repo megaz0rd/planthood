@@ -36,6 +36,11 @@
             <li class="nav-item"><a class="nav-link"
                                     href="{% url 'plantswap:reminder-list' %}">
                 Przypomnienia</a></li>
+            <form action="{% url 'index' %}" method="GET">
+                    <input class="form-control me-2" name="q"
+                           type="search"
+                    placeholder="Szukaj roślin..." aria-label="Search">
+            </form>
             {% endif %}
         </ul>
         <ul class="navbar-nav ml-auto">
@@ -43,10 +48,23 @@
             <li class="nav-item">
                 <span class="navbar-text">Witaj, {{ user.first_name }}.</span>
             </li>
-            <li class="nav-item">
-                <a class="nav-link"
-                   href="{% url 'members:edit-profile' %}">Edytuj
-                    profil</a>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle"
+                 href="#" id="navbarDropdown"
+                 role="button" data-toggle="dropdown" aria-expanded="false">
+                Twoje konto</a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item"
+                       href="{% url 'members:edit-profile' %}">
+                    Edytuj dane</a></li>
+                <li><a class="dropdown-item"
+                       href="{% url 'members:edit-address' %}">
+                    Edytuj adres</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item"
+                       href="{% url 'members:change-password' %}">
+                    Zmień hasło</a></li>
+              </ul>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'logout' %}">
