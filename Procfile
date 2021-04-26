@@ -1,1 +1,1 @@
-web: gunicorn planthood:planthood.wsgi
+web: gunicorn planthood.wsgi
