@@ -36,5 +36,108 @@
            href="{% url 'members:register' %}"
            role="button">Załóż konto &raquo;</a>
     </div>
-    {% endif %}
+    {% else %}
+<div class="album py-5 bg-light">
+    <div class="container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            {% for plant in plants %}
+            <div class="col">
+                <div class="card shadow-sm">
+                    {% if plant.photo.url %}
+                    <a href="{% url 'plantswap:plant-detail' plant.pk %}">
+                        <img src="{{ plant.photo.url }}" width="100%"
+                         height="300"></a>
+                    {% else %}
+                    <a href="{% url 'plantswap:plant-detail' plant.pk %}">
+                    <svg class="bd-placeholder-img card-img-top" width="100%"
+                         height="225" xmlns="http://www.w3.org/2000/svg"
+                         role="img" aria-label="Placeholder: Thumbnail"
+                         preserveAspectRatio="xMidYMid slice" focusable="false">
+                        <title>Placeholder</title>
+                        <rect width="100%" height="100%" fill="#55595c"></rect>
+                        <text x="50%" y="50%" fill="#eceeef" dy=".3em">
+                            {{ plant.name }}
+                        </text>
+                    </svg>
+                    </a>
+                    {% endif %}
+                    <div class="card-body">
+                        <p class="card-text">
+                            {{ plant.description|truncatechars:70 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                {% if plant.status == 1 %}
+                                <a href="{{ plant.get_add_to_transaction_url }}"
+                                   class="btn btn-sm btn-outline-success">Weź
+                                  tę roślinkę!</a>
+                                {% elif plant.status == 2 %}
+                                    <a href="{{ plant.get_add_to_transaction_url }}"
+                                   class="btn btn-sm btn-outline-danger">Daj
+                                        tę roślinkę!</a>
+                                {% endif %}
+                            </div>
+                            <small class="text-muted">{{ plant.name }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p align="center">Aktualnie nie ma roślinek do adopcji.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a class="nav-link"
+               href="?page={{ page_obj.previous_page_number }}">&laquo;
+                poprzednia
+            </a> |
+            {% if page_obj.number|add:-3 in page_obj.paginator.page_range %}
+                <a class="nav-link"
+                   href="?page={{ page_obj.number|add:'-3' }}">
+                {{ page_obj.number|add:'-3' }}</a> |
+            {% endif %}
+            {% if page_obj.number|add:-2 in page_obj.paginator.page_range %}
+                <a class="nav-link"
+                   href="?page={{ page_obj.number|add:'-2' }}">
+                {{ page_obj.number|add:'-2' }}</a> |
+            {% endif %}
+            <a class="nav-link"
+               href="?page={{ page_obj.previous_page_number }}">
+                {{ page_obj.previous_page_number }}
+            </a> |
+        {% endif %}
+
+<!--        <span class="current">-->
+<!--            <a class="nav-link"-->
+<!--               href="?page={{ page_obj.number }}">{{ page_obj.number }}</a>-->
+<!--        </span>-->
+
+        {% if page_obj.has_next %}
+            | <a class="nav-link"
+                 href="?page={{ page_obj.next_page_number }}">
+                {{ page_obj.next_page_number }}</a> |
+
+            {% if page_obj.number|add:2 in page_obj.paginator.page_range %}
+                <a class="nav-link"
+                   href="?page={{ page_obj.number|add:'2' }}">
+                {{ page_obj.number|add:'2' }}</a> |
+            {% endif %}
+
+            {% if page_obj.number|add:3 in page_obj.paginator.page_range %}
+                <a class="nav-link"
+                   href="?page={{ page_obj.number|add:'3' }}">
+                {{ page_obj.number|add:'3' }}</a> |
+            {% endif %}
+
+            <a class="nav-link"
+               href="?page={{ page_obj.next_page_number }}"> następna
+                &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
 {% endblock content %}

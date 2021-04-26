@@ -1,41 +1,96 @@
 {% extends 'base.html' %}
 
-{% block title %} Rośliny w okolicy {% endblock %}
+{% block title %}
+Rośliny w okolicy
+{% endblock %}
 
 {% block page_header %}
-    <h2>
-        Twoje wymiany
-        <a href="{% url 'plantswap:transaction-add' %}"
-           class="btn btn-sm btn-outline-secondary">Dodaj nową wymianę</a>
-    </h2>
+<h2> Twoje wymiany </h2>
 {% endblock page_header %}
 
 {% block content %}
 
-    {% if messages %}
-        <div class="alert alert-success">
-            {% for message in messages %}
-            {{ message }}
-            {% endfor %}
-        </div>
-    {% endif %}
-
-    {% for transaction in transactions %}
-    <ul class="list-unstyled">
-        <li>nazwa: {{ transaction.name }}</li>
-        <li>opis: {{ transaction.description }}</li>
-        <li>status: {{ transaction.get_status_display }}</li>
-        {% for detail in transaction.plant.values %}
-        <div class="btn-group">
-            <a href="{% url 'plantswap:plant-detail' detail.id %}"
-               class="btn btn-sm btn-outline-secondary">{{ detail.name }}</a>
-            {% endfor %}
-
-        <a href="{% url 'plantswap:transaction-edit' transaction.id %}"
-           class="btn btn-sm btn-outline-primary">Edytuj wymianę </a>
-        </div>
-    </ul>
-    {% empty %}
-        Nie masz jeszcze żadnej dostępnej wymiany.
+{% if messages %}
+<div class="alert alert-success">
+    {% for message in messages %}
+    {{ message }}
     {% endfor %}
+</div>
+{% endif %}
+
+{% for transaction in transactions %}
+
+<div class="container row mb-3">
+    {% if transaction.plant.plant.owner == user %}
+    {% if transaction.plant.plant.status == 1 %}
+    <div class="col-md-3 themed-grid-col">
+        Oferujesz
+    </div>
+    <div class="col-md-6 themed-grid-col">
+        {{ transaction.plant.plant.name }}
+    </div>
+    <div class="col-md-3 themed-grid-col">
+        <a href="{% url 'plantswap:transaction-detail' transaction.pk %}"
+           class="btn btn-sm btn-info">Szczegóły</a>
+        {% if not transaction.finished %}
+        <a href="{% url 'plantswap:transaction-finalize' transaction.pk %}"
+           class="btn btn-sm btn-danger">Zakończ transakcje</a>{% endif %}
+    </div>
+    {% elif transaction.plant.plant.status == 2 %}
+    <div class="col-md-3 themed-grid-col">
+        Szukasz
+    </div>
+    <div class="col-md-6 themed-grid-col">
+        {{ transaction.plant.plant.name }}
+    </div>
+    <div class="col-md-3 themed-grid-col">
+        <a href="{% url 'plantswap:transaction-detail' transaction.pk %}"
+           class="btn btn-sm btn-info">Szczegóły</a>
+        {% if not transaction.finished %}
+        <a href="{% url 'plantswap:transaction-finalize' transaction.pk %}"
+           class="btn btn-sm btn-danger">Zakończ transakcje</a>
+        {% endif %}
+        {% endif %}
+    </div>
+    {% else %}
+
+    {% if transaction.plant.plant.status == 1 %}
+    <div class="col-md-3 themed-grid-col">
+        Szukasz
+    </div>
+    <div class="col-md-3 themed-grid-col">
+        {{ transaction.plant.plant.name }}
+    </div>
+    <div class="col-md-6 themed-grid-col">
+        <a href="{% url 'plantswap:transaction-detail' transaction.pk %}"
+           class="btn btn-sm btn-info">Szczegóły</a>
+        {% if not transaction.finished %}
+        <a href="{% url 'plantswap:transaction-finalize' transaction.pk %}"
+           class="btn btn-sm btn-danger">Zakończ transakcje</a>
+        {% endif %}
+    </div>
+    {% elif transaction.plant.plant.status == 2 %}
+    <div class="col-md-3 themed-grid-col">
+        Oferujesz
+    </div>
+    <div class="col-md-3 themed-grid-col">
+        {{ transaction.plant.plant.name }}
+    </div>
+    <div class="col-md-6 themed-grid-col">
+        <a href="{% url 'plantswap:transaction-detail' transaction.pk %}"
+           class="btn btn-sm btn-info">Szczegóły</a>
+        {% if not transaction.finished %}
+        <a href="{% url 'plantswap:transaction-finalize' transaction.pk %}"
+           class="btn btn-sm btn-danger">Zakończ transakcje</a>
+        {% endif %}
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+{% empty %}
+<div class="col-xxl-4">
+    Nie masz jeszcze żadnej dostępnej wymiany.
+</div>
+{% endfor %}
+
 {% endblock %}

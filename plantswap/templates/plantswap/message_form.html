@@ -2,28 +2,23 @@
 {% load bootstrap4 %}
 
 {% block title %}
-    {% if not object.pk %}
-        Utwórz wymianę
-    {% else %}
-        Edytuj wymianę
-    {% endif %}
+  Wyślij wiadomość
 {% endblock %}
 
 {% block page_header %}
-    <h2>Twoja wymiana</h2>
+    <h2>Skontaktuj się w sprawie roślinki</h2>
 {% endblock page_header %}
 
 {% block content %}
 
-
     <form action="" method="POST">
         {% csrf_token %}
-        Czy na pewno chcesz zakończyć transakcję?
-        <input type="checkbox" name="finished">
+        {% bootstrap_form form %}
         {% buttons %}
         <button type="submit" class="btn btn-info">
-                Zakończ transakcję
+                Wyślij wiadomość
         </button>
         {% endbuttons %}
     </form>
+
 {% endblock %}

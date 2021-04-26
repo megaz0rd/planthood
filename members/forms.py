@@ -8,6 +8,8 @@ class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField()
     first_name = forms.CharField(max_length=64)
     last_name = forms.CharField(max_length=64)
+    street = forms.CharField(max_length=64)
+    building_number = forms.CharField(max_length=8)
 
     class Meta:
         model = User
@@ -25,16 +27,22 @@ class UserEditForm(UserChangeForm):
     first_name = forms.CharField(max_length=64)
     last_name = forms.CharField(max_length=64)
     email = forms.EmailField()
-    street = forms.CharField(max_length=64)
-    building_number = forms.CharField(max_length=8)
+    password = None
 
     class Meta:
-        model = UserProfile
+        model = User
         fields = [
             'first_name',
             'last_name',
             'email',
+        ]
+
+
+class UserProfileEditForm(forms.ModelForm):
+
+    class Meta:
+        model = UserProfile
+        fields = [
             'street',
             'building_number',
-            'password'
         ]

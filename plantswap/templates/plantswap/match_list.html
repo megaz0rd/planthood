@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %} Rośliny w okolicy {% endblock %}
+
+{% block page_header %}
+    <h2>
+        Twoje wymiany
+        <a href=""
+           class="btn btn-sm btn-outline-secondary">Dodaj nową wymianę</a>
+    </h2>
+{% endblock page_header %}
+
+{% block content %}
+
+    {% if messages %}
+        <div class="alert alert-success">
+            {% for message in messages %}
+            {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% for transaction in transactions %}
+    <ul class="list-unstyled">
+        {% for match in transaction.plant.all %}
+            {% if match.plant.owner == user %}
+                {% if match.plant.status == 1 %}
+                    Oferujesz: {{ match.plant.name }}
+            <a href="{% url 'plantswap:transaction-detail' transaction.pk %}">
+                    Szczegóły</a>
+                {% elif match.plant.status == 2 %}
+                Szukasz: {{ match.plant.name }}
+                <a href="{% url 'plantswap:transaction-detail' transaction.pk %}">
+                    Szczegóły</a>
+
+                {% endif %}
+            {% else %}
+                {% if match.plant.status == 1 %}
+                    Szukasz: {{ match.plant.name }}
+            <a href="{% url 'plantswap:transaction-detail' transaction.pk %}">
+                    Szczegóły</a>
+                {% elif match.plant.status == 2 %}
+                    Oferujesz: {{ match.plant.name }}
+                <a href="{% url 'plantswap:transaction-detail' transaction.pk %}">
+                    Szczegóły</a>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </ul>
+    {% empty %}
+        Nie masz jeszcze żadnej dostępnej wymiany.
+    {% endfor %}
+{% endblock %}

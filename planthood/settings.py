@@ -101,7 +101,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'CET'
 
 DATE_INPUT_FORMATS = ['%d-%m-%Y']
 
@@ -123,6 +123,16 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+# Email settings
+EMAIL_HOST = 'smtp.gmail.com'  # 'localhost'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'planthood.mokotow@gmail.com'
+EMAIL_HOST_PASSWORD = 'dkzkncjxqsrfrchc'
+EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = False
+
+# Local settings
 
 try:
     from planthood.local_settings import DATABASES
