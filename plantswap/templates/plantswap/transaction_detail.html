@@ -3,37 +3,56 @@
 {% block title %} Szczegóły rośliny {% endblock %}
 
 {% block page_header %}
-    <h2>Szczegóły transakcji</h2>
+<h2>Szczegóły transakcji</h2>
 {% endblock page_header %}
 
 {% block content %}
 
-{{ object.message.all }}
 
-{% for detail in object.plant.all %}
-
-<br>
-    {% if detail.plant.status == 1 %}
+<div class="container">
+    {% if object.plant.plant.status == 1 %}
         {% if object.to_user == user %}
-            Możesz wziąć {{ detail.plant }} od {{ object.from_user }}
+            Możesz wziąć {{ object.plant.plant.name }} od
+            {{ object.from_user.first_name }}.
+            Roślina będzie do odbioru z ulicy
+            {{ object.from_user.userprofile.street }}.
         {% else %}
-            {{ object.to_user }} chce wziąć od Ciebie {{ detail.plant }}
+            {{ object.to_user.first_name }} chce wziąć od Ciebie
+            {{ object.plant.plant.name }}
         {% endif %}
-    {% elif detail.plant.status == 2 %}
+    {% elif object.plant.plant.status  == 2 %}
         {% if object.from_user == user %}
-            Możesz dać {{ detail.plant }} dla {{ object.to_user }}
+            Możesz dać {{ object.plant.plant.name }} dla
+            {{ object.to_user.first_name }}
         {% else %}
-            {{ object.from_user }} oferuje Ci {{ detail.plant }}
+            {{ object.from_user.first_name }} oferuje Ci
+            {{ object.plant.plant.name }}.
+            Roślina będzie do odbioru z ulicy
+            {{ object.from_user.userprofile.street }}}.
         {% endif %}
     {% endif %}
 
-    <a href="{% url 'plantswap:message' detail.pk %}">Skontaktuj się</a>
-<br>
-{% for message in object.message.all %}
-{% empty %}
-    Nie wymieniliście jeszcze między sobą wiadomości.
-{% endfor %}
-
-{% endfor %}
-
+    <br/><br/>
+    {% for message in object.message.all %}
+        {% if message.from_user == user %}
+            <p>W dniu
+                <b>{{ message.date|date:"d.m.Y" }} r.</b> o godz.
+                <b>{{ message.date|date:"H:i" }}</b> napisałaś/eś:
+                <i>{{ message.content }}</i> <br/>
+            </p>
+         {% else %}
+            <p>
+                <b>{{ message.from_user.first_name }}</b> w dniu
+                <b>{{ message.date|date:"d.m.Y" }} r.</b> o godz.
+                <b>{{ message.date|date:"H:i" }}</b> napisał/a:
+                <i>{{ message.content }}</i> <br/>
+            </p>
+        {% endif %}
+    {% empty %}
+        Nie wymieniliście jeszcze między sobą wiadomości.
+    {% endfor %}
+    <br/><br/>
+</div>
+    <a href="{% url 'plantswap:message' object.plant.pk %}"
+       class="btn btn-info"> Odpowiedz</a>
 {% endblock %}

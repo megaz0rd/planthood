@@ -14,16 +14,15 @@
 {% endblock page_header %}
 
 {% block content %}
+
+
     <form action="" method="POST">
         {% csrf_token %}
-        {% bootstrap_form form %}
+        Czy na pewno chcesz zakończyć transakcję?
+        <input type="checkbox" name="finished">
         {% buttons %}
         <button type="submit" class="btn btn-info">
-            {% if not object.pk %}
-                Dodaj wymianę
-            {% else %}
-                Zapisz zmiany
-            {% endif %}
+                Zakończ transakcję
         </button>
         {% endbuttons %}
     </form>

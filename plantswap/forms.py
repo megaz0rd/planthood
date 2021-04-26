@@ -62,9 +62,9 @@ class MessageForm(forms.ModelForm):
             'to_user',
             'content',
         ]
-        # widgets = {
-        #     'match': forms.HiddenInput(),
-        #     'from_user': forms.HiddenInput(),
-        #     'to_user': forms.HiddenInput()
-        # }
+        widgets = {
+            'match': forms.HiddenInput(),
+            'from_user': forms.HiddenInput(),
+            'to_user': forms.HiddenInput()
+        }
         labels = {'content': ''}

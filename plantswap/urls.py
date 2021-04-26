@@ -17,6 +17,8 @@ urlpatterns = [
          name='transaction-detail'),
     path('transactions/message/<int:pk>/', views.MessageSendView.as_view(),
          name='message'),
+    path('transactions/finalize/<int:pk>/', views.TransactionEndView.as_view(),
+         name='transaction-finalize'),
     path('reminders/', views.ReminderListView.as_view(),
          name='reminder-list'),
     path('reminders/new/', views.ReminderCreateView.as_view(),

@@ -81,12 +81,6 @@ class PlantDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Plant
     pk_url_kwarg = 'pk'
 
-    def get_context_data(self, **kwargs):
-        context = super(PlantDetailView, self).get_context_data(**kwargs)
-        reminders = self.get_object().reminder_set.all()
-        context['reminders'] = reminders
-        return context
-
     def test_func(self):
         """Prevent request.user access to adopted plant which user is no
         longer an owner or never was"""
@@ -95,6 +89,12 @@ class PlantDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
                    self.request.user != self.get_object().owner
         else:
             return self.request.user == self.get_object().owner
+
+    def get_context_data(self, **kwargs):
+        context = super(PlantDetailView, self).get_context_data(**kwargs)
+        reminders = self.get_object().reminder_set.all()
+        context['reminders'] = reminders
+        return context
 
 
 class PlantListView(LoginRequiredMixin, ListView):
@@ -107,23 +107,32 @@ class PlantListView(LoginRequiredMixin, ListView):
         return self.model.objects.filter(owner=self.request.user)
 
 
-class PlantUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+class PlantUpdateView(LoginRequiredMixin, UserPassesTestMixin,
+                      SuccessMessageMixin, UpdateView):
     """Powers a form to update an existing plant."""
 
     model = Plant
     pk_url_kwarg = 'pk'
     form_class = PlantForm
 
+    def test_func(self):
+        """Prevent request.user from access to edit plant which user does not
+        own"""
+        return self.request.user == self.get_object().owner
+
     def get_success_message(self, cleaned_data):
         return "Roślina pomyślnie zaktualizowana!"
 
 
-class MessageSendView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+class MessageSendView(LoginRequiredMixin, UserPassesTestMixin,
+                      SuccessMessageMixin, CreateView):
     model = Message
     form_class = MessageForm
     success_url = reverse_lazy('index')
 
     def get_initial(self, **kwargs):
+        """Initialize message form with match, its user and
+        match's plant owner"""
         match = Match.objects.get(pk=self.kwargs['pk'])
         if self.request.user == match.plant.owner:
             initial = {
@@ -139,10 +148,21 @@ class MessageSendView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
             }
         return initial
 
-    def form_valid(self, form):
-        message = form.save(commit=False)
-        message.send_email()
+    def test_func(self):
+        """Prevent request.user from sending message to user with whom user
+        does not have particular transaction"""
+        match = Match.objects.get(pk=self.kwargs['pk'])
+        return self.request.user == match.plant.owner or \
+               self.request.user == match.user
 
+    def form_valid(self, form):
+        """Valid form message, add message object to the particular transaction,
+        save form and send email."""
+        message = form.save(commit=False)
+        transaction = Transaction.objects.get(plant=message.match)
+        message.save()
+        transaction.message.add(message)
+        form.send_email()
         return super().form_valid(form)
 
     def get_success_message(self, cleaned_data):
@@ -157,10 +177,17 @@ class TransactionDetailView(LoginRequiredMixin, UserPassesTestMixin,
     pk_url_kwarg = 'pk'
 
     def test_func(self):
-        """Prevent request.user access to transaction which user is not a
+        """Prevent request.user from access to transaction which user is not a
         part of"""
+
         return self.request.user == self.get_object().to_user or \
                self.request.user == self.get_object().from_user
+
+
+class TransactionEndView(LoginRequiredMixin, UpdateView):
+    model = Transaction
+    pk_url_kwarg = 'pk'
+    fields = ['finished']
 
 
 class TransactionListView(LoginRequiredMixin, ListView):
@@ -188,6 +215,7 @@ class ReminderCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         Passes the request object to the form class. This is necessary to
         only display in select field plants that belong to a given user.
         """
+
         kwargs = super(ReminderCreateView, self).get_form_kwargs()
         kwargs['request'] = self.request
         return kwargs
@@ -206,13 +234,20 @@ class ReminderListView(LoginRequiredMixin, ListView):
         return self.model.objects.filter(creator=self.request.user)
 
 
-class ReminderUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+class ReminderUpdateView(LoginRequiredMixin, UserPassesTestMixin,
+                         SuccessMessageMixin, UpdateView):
     """Powers a form to update an existing reminder."""
 
     model = Reminder
     form_class = ReminderForm
     pk_url_kwarg = 'pk'
     success_url = reverse_lazy('plantswap:reminder-list')
+
+    def test_func(self):
+        """Prevent request.user from access to edit reminder which user does not
+        create"""
+
+        return self.request.user == self.get_object().creator
 
     def get_form_kwargs(self):
         """
@@ -239,12 +274,12 @@ def add_to_transaction(request, pk):
             plant=plant
         )
         if plant.status == 1:
-            transaction = Transaction.objects.create(from_user=plant.owner,
-                                                     to_user=request.user)
-            transaction.plant.add(match)
+            Transaction.objects.create(from_user=plant.owner,
+                                       to_user=request.user,
+                                       plant=match)
             return redirect('plantswap:message', pk=match.id)
         elif plant.status == 2:
-            transaction = Transaction.objects.create(to_user=plant.owner,
-                                                     from_user=request.user)
-            transaction.plant.add(match)
+            Transaction.objects.create(to_user=plant.owner,
+                                       from_user=request.user,
+                                       plant=match)
             return redirect('plantswap:message', pk=match.id)

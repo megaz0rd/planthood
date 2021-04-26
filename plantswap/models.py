@@ -57,12 +57,15 @@ class Message(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     content = models.TextField()
 
+    class Meta:
+        ordering = ['-date']
+
     def __str__(self):
         return self.content
 
 
 class Transaction(models.Model):
-    plant = models.ManyToManyField(Match)
+    plant = models.ForeignKey(Match, on_delete=models.CASCADE)
     to_user = models.ForeignKey(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE,
                                 related_name='taker')
@@ -72,9 +75,15 @@ class Transaction(models.Model):
     finished = models.BooleanField(default=False)
     message = models.ManyToManyField(Message)
 
+    class Meta:
+        ordering = ['pk']
+
     def __str__(self):
         return 'Transaction between: ' + self.to_user.username + ' and ' + \
                self.from_user.username
+
+    def get_absolute_url(self):
+        return reverse_lazy('plantswap:transaction-detail', args=[str(self.pk)])
 
 
 class Reminder(models.Model):

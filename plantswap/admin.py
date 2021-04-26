@@ -22,7 +22,15 @@ class ReminderAdmin(admin.ModelAdmin):
 admin.site.register(Reminder, ReminderAdmin)
 
 admin.site.register(Match)
-admin.site.register(Transaction)
+
+
+class TransactionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'from_user', 'to_user', 'finished')
+    search_fields = ('plant', 'from_user', 'to_user')
+    readonly_fields = ('id', 'message')
+
+
+admin.site.register(Transaction, TransactionAdmin)
 
 
 class MessageAdmin(admin.ModelAdmin):
