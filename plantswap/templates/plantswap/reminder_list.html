@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %} Plantcare {% endblock %}
+{% block title %} Twoje przypomnienia {% endblock %}
 
 {% block page_header %}
     <h2>
@@ -16,24 +16,52 @@
 {% if messages %}
     <div class="alert alert-success">
         {% for message in messages %}
-        {{ message }}
+            {{ message }}
         {% endfor %}
     </div>
 {% endif %}
 
-{% for reminder in reminders %}
-    <ul class="list-unstyled">
-        <li>rodzaj: {{ reminder.get_name_display }}</li>
-        {% for detail in reminder.plant.values %}
-            {{ detail.name }}
-            <img src="{{ detail.photo.url }}">
-        {% endfor %}
-        <li>poprzednia pielęgnacja: {{ reminder.previous_care_day }}</li>
-        <li>cykl: {{ reminder.cycle }}</li>
-        <li>następna pielęgnacja: {{ reminder.next_care_day }}</li>
-        <a href="{% url 'plantswap:reminder-edit' reminder.pk %}">Edytuj</a>
-    </ul>
+</br>
+
+<div class="album py-5 bg-light">
+    <div class="container">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            {% for reminder in reminders %}
+            <div class="col">
+                <div class="card shadow-sm">
+                    {% if reminder.plant.photo %}
+                    <img src="{{ reminder.plant.photo.url }}" width="100%"
+                         height="300">
+                    {% else %}
+                    <img src="/media/plants/no_foto.jpg" width="100%"
+                         height="300">
+                    {% endif %}
+                    <div class="card-body">
+                        <p class="card-text">
+                        <ul class="list-unstyled">
+                            <li>{{ reminder.get_name_display }}</li>
+                            <li>ostatnio: {{ reminder.previous_care_day }}</li>
+                            <li>następnie: {{ reminder.next_care_day }}</li>
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <a href="{% url 'plantswap:reminder-edit' reminder.pk %}"
+                                   class="btn btn-sm btn-outline-secondary">Edytuj
+                                </a>
+                                <a href=""
+                                   class="btn btn-sm btn-outline-danger">Usuń
+                                </a>
+                            </div>
+                            <small class="text-muted">
+                                {{ reminder.plant }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
     {% empty %}
         Nie masz jeszcze dodanych przypomnień.
-{% endfor %}
+    {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock %}
