@@ -32,12 +32,12 @@ Rośliny w okolicy
         </div>
         <div class="col-md-3 themed-grid-col">
             <a href="{% url 'plantswap:transaction-detail' transaction.pk %}"
-               class="btn btn-sm btn-info">Szczegóły</a>
+               class="btn btn-sm btn-outline-secondary">Szczegóły</a>
             {% if not transaction.finished %}
             <a href="{% url 'plantswap:transaction-finalize' transaction.pk %}"
-               class="btn btn-sm btn-success">Zakończ</a>
+               class="btn btn-sm btn-outline-success">Zakończ</a>
             <a href="{% url 'plantswap:transaction-delete' transaction.pk %}"
-               class="btn btn-sm btn-danger">Anuluj</a>
+               class="btn btn-sm btn-outline-danger">Anuluj</a>
             {% endif %}
         </div>
         {% elif transaction.plant.status == 2 %}
@@ -49,12 +49,12 @@ Rośliny w okolicy
         </div>
         <div class="col-md-3 themed-grid-col">
             <a href="{% url 'plantswap:transaction-detail' transaction.pk %}"
-               class="btn btn-sm btn-info">Szczegóły</a>
+               class="btn btn-sm btn-outline-secondary">Szczegóły</a>
             {% if not transaction.finished %}
             <a href="{% url 'plantswap:transaction-finalize' transaction.pk %}"
-               class="btn btn-sm btn-success">Zakończ</a>
+               class="btn btn-sm btn-outline-success">Zakończ</a>
             <a href="{% url 'plantswap:transaction-delete' transaction.pk %}"
-               class="btn btn-sm btn-danger">Anuluj</a>
+               class="btn btn-sm btn-outline-danger">Anuluj</a>
             {% endif %}
         </div>
         {% endif %}
@@ -68,12 +68,12 @@ Rośliny w okolicy
         </div>
         <div class="col-md-3 themed-grid-col">
             <a href="{% url 'plantswap:transaction-detail' transaction.pk %}"
-               class="btn btn-sm btn-info">Szczegóły</a>
+               class="btn btn-sm btn-outline-secondary">Szczegóły</a>
             {% if not transaction.finished %}
             <a href="{% url 'plantswap:transaction-finalize' transaction.pk %}"
-               class="btn btn-sm btn-success">Zakończ</a>
+               class="btn btn-sm btn-outline-success">Zakończ</a>
             <a href="{% url 'plantswap:transaction-delete' transaction.pk %}"
-               class="btn btn-sm btn-danger">Anuluj</a>
+               class="btn btn-sm btn-outline-danger">Anuluj</a>
             {% endif %}
         </div>
         {% elif transaction.plant.status == 2 %}
@@ -85,12 +85,12 @@ Rośliny w okolicy
         </div>
         <div class="col-md-3 themed-grid-col">
             <a href="{% url 'plantswap:transaction-detail' transaction.pk %}"
-               class="btn btn-sm btn-info">Szczegóły</a>
+               class="btn btn-sm btn-outline-secondary">Szczegóły</a>
             {% if not transaction.finished %}
             <a href="{% url 'plantswap:transaction-finalize' transaction.pk %}"
-               class="btn btn-sm btn-success">Zakończ</a>
+               class="btn btn-sm btn-outline-success">Zakończ</a>
             <a href="{% url 'plantswap:transaction-delete' transaction.pk %}"
-               class="btn btn-sm btn-danger">Anuluj</a>
+               class="btn btn-sm btn-outline-danger">Anuluj</a>
             {% endif %}
         </div>
         {% endif %}

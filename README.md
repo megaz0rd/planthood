@@ -14,7 +14,6 @@ Aplikacja powinna umożliwić:
 MUST HAVE
 
 * tworzenie wymian
-* modyfikowanie wymian
 * przegląd wymian
 
 COULD HAVE
@@ -23,11 +22,11 @@ COULD HAVE
 
 Wymiana (Transaction):
 
-* nazwa (name)
-* opis (description)
-* zdjęcie (image) // lub roślina (plant, FK Plant)
-* status (status)
-* użytkownik (creator, FK User)
+* roślina (plant)
+* od użytkownika (from_user)
+* do użytkownika (to_user)
+* ukończona (finished)
+* wiadomość (message)
 
 ## Kwiaty
 
@@ -36,8 +35,8 @@ Aplikacja powinna umożliwić:
 MUST HAVE
 
 * tworzenie rośliny
-* modyfikowanie kwiatów
-* przegląd kwiatów
+* modyfikowanie rośliny
+* przegląd roślin
 
 COULD HAVE
 
@@ -46,11 +45,10 @@ COULD HAVE
 Roślina (Plant):
 
 * nazwa (name)
-* zdjęcie (image) ** opcjonalne
-* opis (description) ** opcjonalne
-* ziemia (ground) ** opcjonalne
-* podlewanie (water) ** opcjonalne
-* właściciel (owner, FK User)
+* zdjęcie (photo) ** opcjonalne
+* opis (description)
+* data dodania (added)
+* właściciel (owner)
 
 ## Wiadomości
 
@@ -66,10 +64,11 @@ WON'T HAVE
 
 Wiadomość (Message):
 
-* nadawca (sender, FK User)
-* odbiorca (receiver, FK User)
-* wymiana (transaction, FK Transaction)
+* nadawca (sender)
+* odbiorca (recipient)
+* roślina (plant)
 * data utworzenia (created_at)
+* treść (content)
 
 
 ## Użytkownik
@@ -92,6 +91,7 @@ Użytkownik (User):
 * nazwisko (last_name)
 * email (email)
 * ulica (street)
+* numer budynku (building number)
 
 
 ## Przypomnienie
@@ -110,10 +110,11 @@ SHOULD HAVE
 
 Przypomnienie (Reminder):
 
-* typ (type, choice)
+* typ (care_type choice)
 * roślina (plan, FK Plant)
-* dzień ostatniej pielęgnacji (last_completed)
+* dzień ostatniej pielęgnacji (previous_care_day)
 * cykl (cycle)
+* dzień kolejnej pielęgnacji (next_care_day)
 
 ## Statystyki
 
@@ -132,7 +133,5 @@ COULD HAVE
 
 ## TBD
 
-* logowanie, autoryzacja
 * obsługa powiadomień
-* obsługa wysyłania wiadomości między użytkownikami
 * obliczanie odległości między użytkownikami

@@ -338,3 +338,15 @@ class ReminderUpdateView(LoginRequiredMixin, UserPassesTestMixin,
 
     def get_success_message(self, cleaned_data):
         return "Przypomnienie pomyślnie zaktualizowane!"
+
+
+class ReminderDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    """Allows user to delete an reminder"""
+    model = Reminder
+    success_url = reverse_lazy('plantswap:reminder-list')
+
+    def test_func(self):
+        """Prevent user from delete a reminder which user
+        is not a part of"""
+
+        return self.request.user == self.get_object().creator

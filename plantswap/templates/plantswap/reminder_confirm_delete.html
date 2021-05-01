@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Przypomnienia
+{% endblock %}
+
+{% block page_header %}
+    <h2>Twoje przypomnienie</h2>
+{% endblock page_header %}
+
+{% block content %}
+
+    <div class="container d-flex justify-content-between">
+        <form method="post" class="view-height">
+            {% csrf_token %}
+            <p>Czy na pewno chcesz usunąć te przypomnienie? Tej operacji nie
+                będzie można cofnąć.</p>
+            <input type="submit" class="btn btn-danger" value="Potwierdź">
+            <a href="{% url 'plantswap:reminder-list' %}"
+                class="btn btn-success">Wróć</a>
+        </form>
+    </div>
+
+{% endblock %}

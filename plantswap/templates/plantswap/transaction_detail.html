@@ -8,6 +8,7 @@
 
 {% block content %}
 
+</br>
 
 <div class="container">
     {% if object.plant.status == 1 %}
@@ -52,9 +53,10 @@
         Nie wymieniliście jeszcze między sobą wiadomości.
     {% endfor %}
     <br/><br/>
-</div>
     {% if not object.finished %}
     <a href="{% url 'plantswap:message' object.pk %}"
        class="btn btn-info"> Odpowiedz</a>
     {% endif %}
+</div>
+
 {% endblock %}

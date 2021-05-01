@@ -56,11 +56,11 @@
                             <div class="btn-group">
                                 {% if plant.status == 1 %}
                                 <a href="{{ plant.get_add_to_transaction_url }}"
-                                   class="btn btn-sm btn-outline-success">Weź
+                                   class="btn btn-sm btn-outline-info">Weź
                                   tę roślinkę!</a>
                                 {% elif plant.status == 2 %}
                                     <a href="{{ plant.get_add_to_transaction_url }}"
-                                   class="btn btn-sm btn-outline-danger">Daj
+                                   class="btn btn-sm btn-outline-info">Daj
                                         tę roślinkę!</a>
                                 {% endif %}
                             </div>
