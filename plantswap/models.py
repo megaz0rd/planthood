@@ -30,23 +30,8 @@ class Plant(models.Model):
                             args=[str(self.pk)])
 
 
-class Match(models.Model):
-    plant = models.ForeignKey(Plant, on_delete=models.CASCADE)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
-
-    def __str__(self):
-        if self.plant.status == 1:
-            return self.user.username + ' wants ' + self.plant.name
-        elif self.plant.status == 2:
-            return self.user.username + ' gives ' + self.plant.name
-
-    class Meta:
-        verbose_name_plural = 'Matches'
-
-
 class Message(models.Model):
-    match = models.ForeignKey(Match,
+    plant = models.ForeignKey(Plant,
                               related_name='comments',
                               on_delete=models.SET_NULL, null=True)
     from_user = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -66,7 +51,7 @@ class Message(models.Model):
 
 
 class Transaction(models.Model):
-    match = models.ForeignKey(Match,
+    plant = models.ForeignKey(Plant,
                               related_name='match',
                               on_delete=models.CASCADE)
     to_user = models.ForeignKey(settings.AUTH_USER_MODEL,

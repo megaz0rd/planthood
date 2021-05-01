@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Plant, Transaction, Reminder, Message, Match
+from .models import Plant, Transaction, Reminder, Message
 
 
 class PlantAdmin(admin.ModelAdmin):
@@ -22,18 +22,18 @@ class ReminderAdmin(admin.ModelAdmin):
 admin.site.register(Reminder, ReminderAdmin)
 
 
-class MatchAdmin(admin.ModelAdmin):
-    list_display = ('id', 'plant', 'user')
-    search_fields = ('plant', 'user')
-    readonly_fields = ('id',)
-
-
-admin.site.register(Match, MatchAdmin)
+# class MatchAdmin(admin.ModelAdmin):
+#     list_display = ('id', 'plant', 'user')
+#     search_fields = ('plant', 'user')
+#     readonly_fields = ('id',)
+#
+#
+# admin.site.register(Match, MatchAdmin)
 
 
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ('id', 'from_user', 'to_user', 'finished')
-    search_fields = ('match', 'from_user', 'to_user')
+    search_fields = ('plant', 'from_user', 'to_user')
     readonly_fields = ('id', 'message')
 
 
@@ -41,7 +41,7 @@ admin.site.register(Transaction, TransactionAdmin)
 
 
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'match', 'from_user', 'to_user', 'content', 'date')
+    list_display = ('id', 'plant', 'from_user', 'to_user', 'content', 'date')
     search_fields = ('from_user', 'to_user', 'date')
     readonly_fields = ('id', 'content', 'date')
 
