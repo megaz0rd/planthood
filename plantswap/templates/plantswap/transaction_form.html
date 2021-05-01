@@ -15,10 +15,11 @@
 
 {% block content %}
 
-
+{% if not object.finished %}
     <form action="" method="POST">
         {% csrf_token %}
-        Czy na pewno chcesz zakończyć transakcję?
+        Doszło do przekazania rośliny? Zakończ transakcję, by
+        roślina zmieniła właściciela w serwisie. &raquo;
         <input type="checkbox" name="finished">
         {% buttons %}
         <button type="submit" class="btn btn-info">
@@ -26,4 +27,7 @@
         </button>
         {% endbuttons %}
     </form>
+{% else %}
+ Transakcja została już wcześniej zakończona.
+{% endif %}
 {% endblock %}

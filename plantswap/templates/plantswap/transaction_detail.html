@@ -28,7 +28,7 @@
             {{ object.from_user.first_name }} oferuje Ci
             {{ object.plant.plant.name }}.
             Roślina będzie do odbioru z ulicy
-            {{ object.from_user.userprofile.street }}}.
+            {{ object.from_user.userprofile.street }}.
         {% endif %}
     {% endif %}
 
@@ -53,6 +53,8 @@
     {% endfor %}
     <br/><br/>
 </div>
+    {% if not object.finished %}
     <a href="{% url 'plantswap:message' object.plant.pk %}"
        class="btn btn-info"> Odpowiedz</a>
+    {% endif %}
 {% endblock %}

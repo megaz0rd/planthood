@@ -26,7 +26,8 @@ class Plant(models.Model):
         return reverse_lazy('plantswap:plant-detail', args=[str(self.pk)])
 
     def get_add_to_transaction_url(self):
-        return reverse_lazy('plantswap:add-to-transaction', args=[str(self.pk)])
+        return reverse_lazy('plantswap:add-to-transaction',
+                            args=[str(self.pk)])
 
 
 class Match(models.Model):
@@ -83,7 +84,8 @@ class Transaction(models.Model):
                self.from_user.username
 
     def get_absolute_url(self):
-        return reverse_lazy('plantswap:transaction-detail', args=[str(self.pk)])
+        return reverse_lazy('plantswap:transaction-detail',
+                            args=[str(self.pk)])
 
 
 class Reminder(models.Model):

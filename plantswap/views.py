@@ -9,7 +9,6 @@ from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import (
     CreateView,
     DetailView,
-    FormView,
     ListView,
     UpdateView,
 )
@@ -29,20 +28,18 @@ from .models import (
 
 
 class MainView(ListView):
-    """
-    Shows landing page if user is not authenticated else page with the
-    plants available to take, exclude those items owned by self.request.user.
-    """
+    """Shows landing page if user is not authenticated else page with the
+    plants available to take, exclude those items owned by user."""
+
     model = Plant
     context_object_name = 'plants'
     template_name = 'index.html'
     paginate_by = 18
 
     def get_queryset(self):
-        """
-        If user is not authenticated shows landing page with create
-        account button.
-        """
+        """If user is not authenticated shows landing page with a create
+        account button."""
+
         if not self.request.user.is_authenticated:
             return super().get_queryset()
         else:
@@ -67,7 +64,8 @@ class PlantCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     form_class = PlantForm
 
     def form_valid(self, form, *args, **kwargs):
-        """Fills owner field in the model's instance."""
+        """Fills owner field in the model's form instance."""
+
         form.instance.owner = self.request.user
         return super(PlantCreateView, self).form_valid(form)
 
@@ -81,20 +79,23 @@ class PlantDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Plant
     pk_url_kwarg = 'pk'
 
+    def get_context_data(self, **kwargs):
+        """Add an extra key to an object context data"""
+
+        context = super(PlantDetailView, self).get_context_data(**kwargs)
+        reminders = self.get_object().reminder_set.all()
+        context['reminders'] = reminders
+        return context
+
     def test_func(self):
-        """Prevent request.user access to adopted plant which user is no
+        """Prevent user from access to an adopted plant which user is no
         longer an owner or never was"""
+
         if self.get_object().status != 3:
             return self.request.user == self.get_object().owner or \
                    self.request.user != self.get_object().owner
         else:
             return self.request.user == self.get_object().owner
-
-    def get_context_data(self, **kwargs):
-        context = super(PlantDetailView, self).get_context_data(**kwargs)
-        reminders = self.get_object().reminder_set.all()
-        context['reminders'] = reminders
-        return context
 
 
 class PlantListView(LoginRequiredMixin, ListView):
@@ -104,7 +105,8 @@ class PlantListView(LoginRequiredMixin, ListView):
     context_object_name = 'plants'
 
     def get_queryset(self):
-        return self.model.objects.filter(owner=self.request.user)
+        return self.model.objects.filter(owner=self.request.user,
+                                         status__in=[1, 2, 3])
 
 
 class PlantUpdateView(LoginRequiredMixin, UserPassesTestMixin,
@@ -116,8 +118,8 @@ class PlantUpdateView(LoginRequiredMixin, UserPassesTestMixin,
     form_class = PlantForm
 
     def test_func(self):
-        """Prevent request.user from access to edit plant which user does not
-        own"""
+        """Prevent user from access to edit plant which user does not own"""
+
         return self.request.user == self.get_object().owner
 
     def get_success_message(self, cleaned_data):
@@ -126,40 +128,53 @@ class PlantUpdateView(LoginRequiredMixin, UserPassesTestMixin,
 
 class MessageSendView(LoginRequiredMixin, UserPassesTestMixin,
                       SuccessMessageMixin, CreateView):
+    """Powers a form to create a message"""
+
     model = Message
     form_class = MessageForm
     success_url = reverse_lazy('index')
 
+    def get_match(self):
+        """Get a match that is an object of a transaction"""
+
+        match = get_object_or_404(Match, pk=self.kwargs['pk'])
+        return match
+
     def get_initial(self, **kwargs):
-        """Initialize message form with match, its user and
-        match's plant owner"""
-        match = Match.objects.get(pk=self.kwargs['pk'])
-        if self.request.user == match.plant.owner:
+        """Initialize message form with populated fields which are hidden
+        from user."""
+
+        if self.request.user == self.get_match().plant.owner:
             initial = {
-                'match': match,
-                'from_user': match.plant.owner,
-                'to_user': match.user
+                'match': self.get_match(),
+                'from_user': self.get_match().plant.owner,
+                'to_user': self.get_match().user
             }
         else:
             initial = {
-                'match': match,
-                'from_user': match.user,
-                'to_user': match.plant.owner
+                'match': self.get_match(),
+                'from_user': self.get_match().user,
+                'to_user': self.get_match().plant.owner
             }
         return initial
 
     def test_func(self):
-        """Prevent request.user from sending message to user with whom user
-        does not have particular transaction"""
-        match = Match.objects.get(pk=self.kwargs['pk'])
-        return self.request.user == match.plant.owner or \
-               self.request.user == match.user
+        """Prevent user from sending message to user with whom user does not
+        have a particular transaction or if the transaction is finished."""
+
+        transaction = get_object_or_404(Transaction, plant=self.get_match())
+        if not transaction.finished:
+            return self.request.user == self.get_match().plant.owner or \
+                   self.request.user == self.get_match().user
+        else:
+            return False
 
     def form_valid(self, form):
-        """Valid form message, add message object to the particular transaction,
+        """Valid form message, add message object to a particular transaction,
         save form and send email."""
+
         message = form.save(commit=False)
-        transaction = Transaction.objects.get(plant=message.match)
+        transaction = get_object_or_404(Transaction, plant=message.match)
         message.save()
         transaction.message.add(message)
         form.send_email()
@@ -171,27 +186,21 @@ class MessageSendView(LoginRequiredMixin, UserPassesTestMixin,
 
 class TransactionDetailView(LoginRequiredMixin, UserPassesTestMixin,
                             DetailView):
-    """Shows user a single plant."""
+    """Shows user a single transaction."""
 
     model = Transaction
     pk_url_kwarg = 'pk'
 
     def test_func(self):
-        """Prevent request.user from access to transaction which user is not a
-        part of"""
+        """Prevent user from access to a transaction which user
+        is not a part of"""
 
         return self.request.user == self.get_object().to_user or \
                self.request.user == self.get_object().from_user
 
 
-class TransactionEndView(LoginRequiredMixin, UpdateView):
-    model = Transaction
-    pk_url_kwarg = 'pk'
-    fields = ['finished']
-
-
 class TransactionListView(LoginRequiredMixin, ListView):
-    """Shows user a list of transactions"""
+    """Shows user a list of transactions which user is a part of"""
 
     model = Transaction
     context_object_name = 'transactions'
@@ -203,6 +212,41 @@ class TransactionListView(LoginRequiredMixin, ListView):
         )
 
 
+class TransactionEndView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    """Powers a form to finish an existing transaction."""
+
+    model = Transaction
+    pk_url_kwarg = 'pk'
+    fields = ['finished']
+    success_url = reverse_lazy('plantswap:transaction-list')
+
+    def form_valid(self, form):
+        """If transaction ends change, change plant owner"""
+        form.save(commit=False)
+        plant = get_object_or_404(Plant, pk=self.get_object().plant.plant.pk)
+        if plant.status == 1:
+            Plant.objects.create(name=plant.name,
+                                 owner=self.get_object().to_user,
+                                 photo=plant.photo,
+                                 status=3)
+        elif plant.status == 2:
+            Plant.objects.create(name=plant.name,
+                                 owner=self.get_object().from_user,
+                                 photo=plant.photo,
+                                 status=3)
+        plant.status = 4
+        form.save()
+        plant.save()
+        return super(TransactionEndView, self).form_valid(form)
+
+    def test_func(self):
+        """Prevent user from access to a transaction where user is not a part
+        of"""
+
+        return self.request.user == self.get_object().plant.plant.owner or \
+               self.request.user == self.get_object().plant.user
+
+
 class ReminderCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     """Powers a form to create a new reminder"""
 
@@ -211,10 +255,8 @@ class ReminderCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     success_url = reverse_lazy('plantswap:reminder-list')
 
     def get_form_kwargs(self):
-        """
-        Passes the request object to the form class. This is necessary to
-        only display in select field plants that belong to a given user.
-        """
+        """Passes the request object to the form class. This is necessary to
+        only display in select field plants that belong to a given user."""
 
         kwargs = super(ReminderCreateView, self).get_form_kwargs()
         kwargs['request'] = self.request
@@ -225,7 +267,7 @@ class ReminderCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
 
 class ReminderListView(LoginRequiredMixin, ListView):
-    """Shows users a list of reminders."""
+    """Shows user a list of reminders which user created."""
 
     model = Reminder
     context_object_name = 'reminders'
@@ -244,16 +286,15 @@ class ReminderUpdateView(LoginRequiredMixin, UserPassesTestMixin,
     success_url = reverse_lazy('plantswap:reminder-list')
 
     def test_func(self):
-        """Prevent request.user from access to edit reminder which user does not
+        """Prevent user from access to edit a reminder which user did not
         create"""
 
         return self.request.user == self.get_object().creator
 
     def get_form_kwargs(self):
-        """
-        Passes the request object to the form class. This is necessary to
-        only display in select field plants that belong to a given user.
-        """
+        """Passes the request object to the form class. This is necessary to
+        only display in select field plants that belong to a given user."""
+
         kwargs = super(ReminderUpdateView, self).get_form_kwargs()
         kwargs['request'] = self.request
         return kwargs

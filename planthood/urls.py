@@ -12,4 +12,4 @@ urlpatterns = [
     path('api/', include('plantswap_api.urls')),
     path('', include('plantswap.urls')),
     path('', views.MainView.as_view(), name='index'),
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

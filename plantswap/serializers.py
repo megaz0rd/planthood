@@ -1,9 +1,11 @@
 from rest_framework import serializers
 
-from plantswap.models import Plant, Transaction
+from plantswap.models import Plant, Match, Transaction
 
 
 class PlantSerializer(serializers.ModelSerializer):
+    status_display = serializers.SerializerMethodField()
+
     class Meta:
         model = Plant
         fields = [
@@ -11,26 +13,35 @@ class PlantSerializer(serializers.ModelSerializer):
             'name',
             'description',
             'photo',
-            'amount',
-            'created_at',
-        ]
-
-
-class TransactionSerializer(serializers.ModelSerializer):
-    status_display = serializers.SerializerMethodField()
-    plant = PlantSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Transaction
-        fields = [
-            'id',
-            'name',
-            'description',
-            'plant',
-            'created_at',
+            'added',
             'status',
-            'status_display'
+            'status_display',
+            'owner'
         ]
 
     def get_status_display(self, obj):
         return obj.get_status_display()
+
+
+class MatchSerializer(serializers.ModelSerializer):
+    plant = PlantSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = Match
+        fields = [
+            'id',
+            'plant',
+            'user'
+        ]
+
+
+class TransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = [
+            'id',
+            # 'plant',
+            'to_user',
+            'from_user',
+            'finished'
+        ]

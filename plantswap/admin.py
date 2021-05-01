@@ -13,8 +13,8 @@ admin.site.register(Plant, PlantAdmin)
 
 
 class ReminderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'plant', 'previous_care_day', 'next_care_day',
-                    'cycle', 'creator')
+    list_display = ('id', 'name', 'plant', 'previous_care_day',
+                    'next_care_day', 'cycle', 'creator')
     search_fields = ('name', 'plant')
     readonly_fields = ('id', 'previous_care_day', 'next_care_day', 'creator')
 

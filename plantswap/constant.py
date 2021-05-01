@@ -1,7 +1,8 @@
 STATUS_CHOICE = (
     (1, 'Oddam'),
     (2, 'Chcę'),
-    (3, 'Adoptowana')
+    (3, 'Posiadam'),
+    (4, 'Przekazana')
 )
 
 CARE_TYPE = (
