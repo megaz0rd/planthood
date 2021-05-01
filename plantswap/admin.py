@@ -21,7 +21,14 @@ class ReminderAdmin(admin.ModelAdmin):
 
 admin.site.register(Reminder, ReminderAdmin)
 
-admin.site.register(Match)
+
+class MatchAdmin(admin.ModelAdmin):
+    list_display = ('id', 'plant', 'user')
+    search_fields = ('plant', 'user')
+    readonly_fields = ('id',)
+
+
+admin.site.register(Match, MatchAdmin)
 
 
 class TransactionAdmin(admin.ModelAdmin):

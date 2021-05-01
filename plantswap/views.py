@@ -7,11 +7,12 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
+from django.views import View
 from django.views.generic import (
     CreateView,
     DetailView,
     ListView,
-    UpdateView,
+    UpdateView, DeleteView,
 )
 
 from .forms import (
@@ -131,6 +132,31 @@ class PlantUpdateView(LoginRequiredMixin, UserPassesTestMixin,
         return "Roślina pomyślnie zaktualizowana!"
 
 
+class AddToTransactionView(View):
+
+    def get(self, request, *args, **kwargs):
+        plant = get_object_or_404(Plant, pk=self.kwargs['pk'])
+        match_query = Match.objects.filter(
+            user=request.user).filter(plant=plant)
+        if match_query.exists():
+            return redirect('plantswap:message', pk=match_query[0].pk)
+        else:
+            match = Match.objects.create(
+                user=request.user,
+                plant=plant
+            )
+            if plant.status == 1:
+                Transaction.objects.create(from_user=plant.owner,
+                                           to_user=request.user,
+                                           match=match)
+                return redirect('plantswap:message', pk=match.id)
+            elif plant.status == 2:
+                Transaction.objects.create(to_user=plant.owner,
+                                           from_user=request.user,
+                                           match=match)
+                return redirect('plantswap:message', pk=match.id)
+
+
 class MessageSendView(LoginRequiredMixin, UserPassesTestMixin,
                       SuccessMessageMixin, CreateView):
     """Powers a form to create a message"""
@@ -202,7 +228,7 @@ class TransactionDetailView(LoginRequiredMixin, UserPassesTestMixin,
         is not a part of"""
 
         return self.request.user == self.get_object().to_user or \
-            self.request.user == self.get_object().from_user
+               self.request.user == self.get_object().from_user
 
 
 class TransactionListView(LoginRequiredMixin, ListView):
@@ -216,6 +242,20 @@ class TransactionListView(LoginRequiredMixin, ListView):
             Q(to_user=self.request.user) |
             Q(from_user=self.request.user)
         )
+
+
+class TransactionDeleteView(LoginRequiredMixin, UserPassesTestMixin,
+                            DeleteView):
+    """Allows user to delete an unfinished transaction"""
+    model = Transaction
+    success_url = reverse_lazy('plantswap:transaction-list')
+
+    def test_func(self):
+        """Prevent user from delete a transaction which user
+        is not a part of"""
+
+        return self.request.user == self.get_object().to_user or \
+               self.request.user == self.get_object().from_user
 
 
 class TransactionEndView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -242,11 +282,12 @@ class TransactionEndView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                                  status=3)
         plant.status = 4
         form.save()
+        self.get_object().match.delete()
         plant.save()
         return super(TransactionEndView, self).form_valid(form)
 
     def test_func(self):
-        """Prevent user from access to a transaction where user is not a part
+        """Prevent user from end a transaction which user is not a part
         of"""
 
         return self.request.user == self.get_object().match.plant.owner or \
@@ -307,26 +348,3 @@ class ReminderUpdateView(LoginRequiredMixin, UserPassesTestMixin,
 
     def get_success_message(self, cleaned_data):
         return "Przypomnienie pomyślnie zaktualizowane!"
-
-
-def add_to_transaction(request, pk):
-    plant = get_object_or_404(Plant, pk=pk)
-    match_query = Match.objects.filter(
-        user=request.user).filter(plant=plant)
-    if match_query.exists():
-        return redirect('plantswap:message', pk=match_query[0].pk)
-    else:
-        match = Match.objects.create(
-            user=request.user,
-            plant=plant
-        )
-        if plant.status == 1:
-            Transaction.objects.create(from_user=plant.owner,
-                                       to_user=request.user,
-                                       match=match)
-            return redirect('plantswap:message', pk=match.id)
-        elif plant.status == 2:
-            Transaction.objects.create(to_user=plant.owner,
-                                       from_user=request.user,
-                                       match=match)
-            return redirect('plantswap:message', pk=match.id)

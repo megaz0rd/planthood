@@ -48,13 +48,13 @@ class Match(models.Model):
 class Message(models.Model):
     match = models.ForeignKey(Match,
                               related_name='comments',
-                              on_delete=models.CASCADE)
+                              on_delete=models.SET_NULL, null=True)
     from_user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                                  on_delete=models.CASCADE,
-                                  related_name='sender')
+                                  on_delete=models.SET_NULL,
+                                  related_name='sender', null=True)
     to_user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                                on_delete=models.CASCADE,
-                                related_name='recipient')
+                                on_delete=models.SET_NULL,
+                                related_name='recipient', null=True)
     date = models.DateTimeField(auto_now_add=True)
     content = models.TextField()
 

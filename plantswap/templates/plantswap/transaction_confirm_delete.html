@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Rośliny w okolicy
+{% endblock %}
+
+{% block content %}
+
+    <div class="container d-flex justify-content-between">
+        <form method="post" class="view-height">
+            {% csrf_token %}
+            <p>Czy na pewno chcesz anulować tę transakcję? Tej operacji nie
+                będzie można cofnąć.</p>
+            <input type="submit" class="btn btn-danger" value="Potwierdź">
+            <a href="{% url 'plantswap:transaction-list' %}"
+                class="btn btn-success">Wróć</a>
+        </form>
+    </div>
+
+{% endblock %}

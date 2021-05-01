@@ -10,24 +10,28 @@
 {% endblock %}
 
 {% block page_header %}
-    <h2>Twoja wymiana</h2>
+    <h2>Twoja wymiana </h2>
 {% endblock page_header %}
 
 {% block content %}
 
+
 {% if not object.finished %}
+<div class="container d-flex justify-content-between">
     <form action="" method="POST">
         {% csrf_token %}
-        Doszło do przekazania rośliny? Zakończ transakcję, by
-        roślina zmieniła właściciela w serwisie. &raquo;
-        <input type="checkbox" name="finished">
+        <p>Doszło do przekazania rośliny? Zakończ transakcję, by
+            roślina zmieniła właściciela w serwisie. &raquo;
+        <input type="checkbox" name="finished"></p>
         {% buttons %}
         <button type="submit" class="btn btn-info">
                 Zakończ transakcję
         </button>
         {% endbuttons %}
     </form>
+</div>
 {% else %}
  Transakcja została już wcześniej zakończona.
 {% endif %}
+
 {% endblock %}
