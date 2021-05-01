@@ -4,12 +4,11 @@ from rest_framework.views import APIView
 
 from plantswap.models import (
     Plant,
-    Match,
+    # Match,
     Transaction
 )
 from plantswap.serializers import (
     PlantSerializer,
-    MatchSerializer,
     TransactionSerializer
 )
 from plantswap_api.utils import week_earlier, this_month, today
@@ -18,11 +17,6 @@ from plantswap_api.utils import week_earlier, this_month, today
 class PlantViewSet(viewsets.ModelViewSet):
     queryset = Plant.objects.all()
     serializer_class = PlantSerializer
-
-
-class MatchViewSet(viewsets.ModelViewSet):
-    queryset = Match.objects.all()
-    serializer_class = MatchSerializer
 
 
 class TransactionViewSet(viewsets.ModelViewSet):

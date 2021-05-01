@@ -22,7 +22,6 @@ from .forms import (
 )
 from .models import (
     Plant,
-    Match,
     Transaction,
     Reminder,
     Message,
@@ -136,25 +135,23 @@ class AddToTransactionView(View):
 
     def get(self, request, *args, **kwargs):
         plant = get_object_or_404(Plant, pk=self.kwargs['pk'])
-        match_query = Match.objects.filter(
-            user=request.user).filter(plant=plant)
-        if match_query.exists():
-            return redirect('plantswap:message', pk=match_query[0].pk)
+        transaction_query = Transaction.objects.filter(plant=plant).filter(
+            Q(to_user=self.request.user) |
+            Q(from_user=self.request.user)
+        )
+        if transaction_query.exists():
+            return redirect('plantswap:message', pk=transaction_query[0].pk)
         else:
-            match = Match.objects.create(
-                user=request.user,
-                plant=plant
-            )
             if plant.status == 1:
-                Transaction.objects.create(from_user=plant.owner,
-                                           to_user=request.user,
-                                           match=match)
-                return redirect('plantswap:message', pk=match.id)
+                transaction = Transaction.objects.create(from_user=plant.owner,
+                                                         to_user=request.user,
+                                                         plant=plant)
+                return redirect('plantswap:message', pk=transaction.id)
             elif plant.status == 2:
-                Transaction.objects.create(to_user=plant.owner,
-                                           from_user=request.user,
-                                           match=match)
-                return redirect('plantswap:message', pk=match.id)
+                transaction = Transaction.objects.create(to_user=plant.owner,
+                                                         from_user=request.user,
+                                                         plant=plant)
+                return redirect('plantswap:message', pk=transaction.id)
 
 
 class MessageSendView(LoginRequiredMixin, UserPassesTestMixin,
@@ -165,31 +162,25 @@ class MessageSendView(LoginRequiredMixin, UserPassesTestMixin,
     form_class = MessageForm
     success_url = reverse_lazy('index')
 
-    def get_match(self):
-        """Get a match that is an object of a transaction"""
-
-        match = get_object_or_404(Match, pk=self.kwargs['pk'])
-        return match
-
     def get_transaction(self):
-        transaction = get_object_or_404(Transaction, match=self.get_match())
+        transaction = get_object_or_404(Transaction, pk=self.kwargs['pk'])
         return transaction
 
     def get_initial(self, **kwargs):
         """Initialize message form with populated fields which are hidden
         from user."""
 
-        if self.request.user == self.get_match().plant.owner:
+        if self.request.user == self.get_transaction().plant.owner:
             initial = {
-                'match': self.get_match(),
-                'from_user': self.get_match().plant.owner,
-                'to_user': self.get_match().user
+                'plant': self.get_transaction().plant,
+                'from_user': self.request.user,
+                'to_user': self.get_transaction().to_user
             }
         else:
             initial = {
-                'match': self.get_match(),
-                'from_user': self.get_match().user,
-                'to_user': self.get_match().plant.owner
+                'plant': self.get_transaction().plant,
+                'from_user': self.request.user,
+                'to_user': self.get_transaction().plant.owner
             }
         return initial
 
@@ -198,8 +189,8 @@ class MessageSendView(LoginRequiredMixin, UserPassesTestMixin,
         have a particular transaction or if the transaction is finished."""
 
         if not self.get_transaction().finished:
-            return self.request.user == self.get_match().plant.owner or \
-                   self.request.user == self.get_match().user
+            return self.request.user == self.get_transaction().from_user or \
+                   self.request.user == self.get_transaction().to_user
         else:
             return False
 
@@ -269,7 +260,7 @@ class TransactionEndView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def form_valid(self, form):
         """If transaction ends change, change plant owner"""
         form.save(commit=False)
-        plant = get_object_or_404(Plant, pk=self.get_object().match.plant.pk)
+        plant = get_object_or_404(Plant, pk=self.get_object().plant.pk)
         if plant.status == 1:
             Plant.objects.create(name=plant.name,
                                  owner=self.get_object().to_user,
@@ -282,7 +273,6 @@ class TransactionEndView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                                  status=3)
         plant.status = 4
         form.save()
-        self.get_object().match.delete()
         plant.save()
         return super(TransactionEndView, self).form_valid(form)
 
@@ -290,8 +280,8 @@ class TransactionEndView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         """Prevent user from end a transaction which user is not a part
         of"""
 
-        return self.request.user == self.get_object().match.plant.owner or \
-               self.request.user == self.get_object().match.user
+        return self.request.user == self.get_object().from_user or \
+               self.request.user == self.get_object().to_user
 
 
 class ReminderCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):

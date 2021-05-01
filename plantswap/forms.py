@@ -59,13 +59,13 @@ class MessageForm(forms.ModelForm):
     class Meta:
         model = Message
         fields = [
-            'match',
+            'plant',
             'from_user',
             'to_user',
             'content',
         ]
         widgets = {
-            'match': forms.HiddenInput(),
+            'plant': forms.HiddenInput(),
             'from_user': forms.HiddenInput(),
             'to_user': forms.HiddenInput()
         }
@@ -74,7 +74,7 @@ class MessageForm(forms.ModelForm):
     def send_email(self):
         send_mail(
             f'Zainteresowanie rośliną: '
-            f'{self.cleaned_data["match"].plant.name}',
+            f'{self.cleaned_data["plant"].name}',
             f'Użytkownik {self.cleaned_data["from_user"]}'
             f' pisze: {self.cleaned_data["content"]}',
             self.cleaned_data['from_user'].email,
