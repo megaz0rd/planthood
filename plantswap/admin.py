@@ -26,7 +26,7 @@ admin.site.register(Match)
 
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ('id', 'from_user', 'to_user', 'finished')
-    search_fields = ('plant', 'from_user', 'to_user')
+    search_fields = ('match', 'from_user', 'to_user')
     readonly_fields = ('id', 'message')
 
 

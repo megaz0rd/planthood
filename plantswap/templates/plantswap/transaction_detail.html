@@ -10,23 +10,23 @@
 
 
 <div class="container">
-    {% if object.plant.plant.status == 1 %}
+    {% if object.match.plant.status == 1 %}
         {% if object.to_user == user %}
-            Możesz wziąć {{ object.plant.plant.name }} od
+            Możesz wziąć {{ object.match.plant.name }} od
             {{ object.from_user.first_name }}.
             Roślina będzie do odbioru z ulicy
             {{ object.from_user.userprofile.street }}.
         {% else %}
             {{ object.to_user.first_name }} chce wziąć od Ciebie
-            {{ object.plant.plant.name }}
+            {{ object.match.plant.name }}
         {% endif %}
-    {% elif object.plant.plant.status  == 2 %}
+    {% elif object.match.plant.status  == 2 %}
         {% if object.from_user == user %}
-            Możesz dać {{ object.plant.plant.name }} dla
+            Możesz dać {{ object.match.plant.name }} dla
             {{ object.to_user.first_name }}
         {% else %}
             {{ object.from_user.first_name }} oferuje Ci
-            {{ object.plant.plant.name }}.
+            {{ object.match.plant.name }}.
             Roślina będzie do odbioru z ulicy
             {{ object.from_user.userprofile.street }}.
         {% endif %}
@@ -54,7 +54,7 @@
     <br/><br/>
 </div>
     {% if not object.finished %}
-    <a href="{% url 'plantswap:message' object.plant.pk %}"
+    <a href="{% url 'plantswap:message' object.match.pk %}"
        class="btn btn-info"> Odpowiedz</a>
     {% endif %}
 {% endblock %}

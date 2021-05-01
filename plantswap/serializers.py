@@ -36,11 +36,13 @@ class MatchSerializer(serializers.ModelSerializer):
 
 
 class TransactionSerializer(serializers.ModelSerializer):
+    match = MatchSerializer(many=False, read_only=True)
+
     class Meta:
         model = Transaction
         fields = [
             'id',
-            # 'plant',
+            'match',
             'to_user',
             'from_user',
             'finished'

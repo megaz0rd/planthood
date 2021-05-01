@@ -66,7 +66,9 @@ class Message(models.Model):
 
 
 class Transaction(models.Model):
-    plant = models.ForeignKey(Match, on_delete=models.CASCADE)
+    match = models.ForeignKey(Match,
+                              related_name='match',
+                              on_delete=models.CASCADE)
     to_user = models.ForeignKey(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE,
                                 related_name='taker')
