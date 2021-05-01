@@ -2,14 +2,27 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.views import APIView
 
-from plantswap.models import Plant, Transaction
-from plantswap.serializers import PlantSerializer, TransactionSerializer
+from plantswap.models import (
+    Plant,
+    Match,
+    Transaction
+)
+from plantswap.serializers import (
+    PlantSerializer,
+    MatchSerializer,
+    TransactionSerializer
+)
 from plantswap_api.utils import week_earlier, this_month, today
 
 
 class PlantViewSet(viewsets.ModelViewSet):
     queryset = Plant.objects.all()
     serializer_class = PlantSerializer
+
+
+class MatchViewSet(viewsets.ModelViewSet):
+    queryset = Match.objects.all()
+    serializer_class = MatchSerializer
 
 
 class TransactionViewSet(viewsets.ModelViewSet):
@@ -23,15 +36,14 @@ class StatsView(APIView):
         stats_data = {
             "transactions": {
                 "total": Transaction.objects.count(),
-                "to_give": Transaction.objects.filter(status=1).count(),
-                "want": Transaction.objects.filter(status=2).count(),
+                "finished": Transaction.objects.filter(finished=True).count(),
             },
             "plants": {
                 'total': Plant.objects.count(),
-                'last week': Plant.objects.filter(
-                    created_at__gte=week_earlier).count(),
-                'this month': Plant.objects.filter(
-                    created_at__gte=this_month).count(),
+                'added last week': Plant.objects.filter(
+                    added__gte=week_earlier).count(),
+                'added this month': Plant.objects.filter(
+                    added__gte=this_month).count(),
             },
             "generation_date": today
         }
