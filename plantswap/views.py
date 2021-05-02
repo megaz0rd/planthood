@@ -3,8 +3,9 @@ from django.contrib.auth.mixins import (
     UserPassesTestMixin
 )
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied
 from django.db.models import Q
+from django import forms
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
 from django.views import View
@@ -15,6 +16,7 @@ from django.views.generic import (
     UpdateView, DeleteView,
 )
 
+from plantswap_api.utils import today
 from .forms import (
     PlantForm,
     ReminderForm,
@@ -93,7 +95,7 @@ class PlantDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         longer an owner or never was"""
 
         if self.get_object().status == 4:
-            raise ValidationError('Nie posiadasz już tej rośliny')
+            raise PermissionDenied
         elif self.get_object().status != 3:
             return self.request.user == self.get_object().owner or \
                    self.request.user != self.get_object().owner
@@ -125,7 +127,7 @@ class PlantUpdateView(LoginRequiredMixin, UserPassesTestMixin,
         if self.get_object().status != 4:
             return self.request.user == self.get_object().owner
         else:
-            raise ValidationError('Nie posiadasz już tej rośliny')
+            raise PermissionDenied
 
     def get_success_message(self, cleaned_data):
         return "Roślina pomyślnie zaktualizowana!"
@@ -318,9 +320,16 @@ class ReminderUpdateView(LoginRequiredMixin, UserPassesTestMixin,
     """Powers a form to update an existing reminder."""
 
     model = Reminder
-    form_class = ReminderForm
+    fields = ['name', 'previous_care_day', 'cycle']
     pk_url_kwarg = 'pk'
     success_url = reverse_lazy('plantswap:reminder-list')
+
+    def get_form(self):
+        """Apply widget for DateTime field"""
+
+        form = super(ReminderUpdateView, self).get_form()
+        form.fields['previous_care_day'].widget = forms.SelectDateWidget()
+        return form
 
     def test_func(self):
         """Prevent user from access to edit a reminder which user did not
@@ -328,16 +337,55 @@ class ReminderUpdateView(LoginRequiredMixin, UserPassesTestMixin,
 
         return self.request.user == self.get_object().creator
 
-    def get_form_kwargs(self):
-        """Passes the request object to the form class. This is necessary to
-        only display in select field plants that belong to a given user."""
-
-        kwargs = super(ReminderUpdateView, self).get_form_kwargs()
-        kwargs['request'] = self.request
-        return kwargs
-
     def get_success_message(self, cleaned_data):
         return "Przypomnienie pomyślnie zaktualizowane!"
+
+
+class ReminderConfirmView(LoginRequiredMixin, UserPassesTestMixin,
+                          SuccessMessageMixin, UpdateView):
+    """Powers a form to confirm a completed reminder."""
+
+    model = Reminder
+    fields = ['is_completed', 'previous_care_day', 'next_care_day']
+    pk_url_kwarg = 'pk'
+    success_url = reverse_lazy('plantswap:reminder-list')
+
+    def get_form(self):
+        """Hide fields from user when user confirms complete of the reminder"""
+
+        form = super(ReminderConfirmView, self).get_form()
+        form.fields['previous_care_day'].widget = forms.HiddenInput()
+        form.fields['next_care_day'].widget = forms.HiddenInput()
+        form.fields['is_completed'].label = 'Potwierdź wykonanie pielęgnacji'
+        return form
+
+    def form_valid(self, form):
+        """Sets new dates for a reminder object based on a cycle when user
+        confirms completed reminder"""
+
+        confirm = form.save(commit=False)
+        if form.cleaned_data['next_care_day'] > today:
+            """If task is confirmed earlier, set care day for 
+            today"""
+            confirm.previous_care_day = today
+        elif form.cleaned_data['previous_care_day'] < today:
+            """If task is overdue set previous care day for today"""
+            confirm.previous_care_day = today
+        else:
+            """If task is confirmed right on time, set new care dates"""
+            confirm.previous_care_day = form.cleaned_data['next_care_day']
+        confirm.is_completed = False
+        confirm.save()
+        return super(ReminderConfirmView, self).form_valid(form)
+
+    def test_func(self):
+        """Prevent user from access to edit a reminder which user did not
+        create"""
+
+        return self.request.user == self.get_object().creator
+
+    def get_success_message(self, cleaned_data):
+        return "Przypomnienie potwierdzone!"
 
 
 class ReminderDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):

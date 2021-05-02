@@ -17,6 +17,7 @@
     <form action="" method="POST">
         {% csrf_token %}
         {% bootstrap_form form %}
+        {{ form.errors }}
         {% buttons %}
         <button type="submit" class="btn btn-info">
             {% if not object.pk %}

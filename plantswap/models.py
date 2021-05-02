@@ -5,6 +5,7 @@ from django.db import models
 from django.urls import reverse_lazy
 
 from plantswap.constant import CARE_TYPE, STATUS_CHOICE
+from plantswap.validators import validate_date
 
 
 class Plant(models.Model):
@@ -78,12 +79,15 @@ class Transaction(models.Model):
 class Reminder(models.Model):
     name = models.CharField(max_length=9, choices=CARE_TYPE, default='WATER')
     plant = models.ForeignKey(Plant, on_delete=models.CASCADE)
-    previous_care_day = models.DateField()
+    previous_care_day = models.DateField(validators=[validate_date])
     cycle = models.SmallIntegerField(default=7)
     next_care_day = models.DateField()  # field not visible for user
     creator = models.ForeignKey(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE)
     is_completed = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['next_care_day']
 
     def save(self, *args, **kwargs):
         self.next_care_day = self.previous_care_day + timedelta(

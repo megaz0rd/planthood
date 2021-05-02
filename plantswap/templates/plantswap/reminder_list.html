@@ -45,8 +45,11 @@
                         </p>
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="btn-group">
+                                <a href="{% url 'plantswap:reminder-confirm' reminder.pk %}"
+                                   class="btn btn-sm btn-outline-success">Potwierdź
+                                </a>
                                 <a href="{% url 'plantswap:reminder-edit' reminder.pk %}"
-                                   class="btn btn-sm btn-outline-primary">Edytuj
+                                   class="btn btn-sm btn-outline-secondary">Edytuj
                                 </a>
                                 <a href="{% url 'plantswap:reminder-delete' reminder.pk%}"
                                    class="btn btn-sm btn-outline-danger">Usuń

@@ -27,6 +27,8 @@ urlpatterns = [
          name='reminder-add'),
     path('reminders/edit/<int:pk>/', views.ReminderUpdateView.as_view(),
          name='reminder-edit'),
+    path('reminders/confirm/<int:pk>/', views.ReminderConfirmView.as_view(),
+         name='reminder-confirm'),
     path('reminders/delete/<int:pk>/', views.ReminderDeleteView.as_view(),
          name='reminder-delete'),
     path('add-to-transaction/<int:pk>/', views.AddToTransactionView.as_view(),

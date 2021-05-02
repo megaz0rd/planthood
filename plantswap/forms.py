@@ -7,7 +7,6 @@ from .models import Plant, Reminder, Message
 
 
 class PlantForm(forms.ModelForm):
-
     class Meta:
         model = Plant
         fields = [
@@ -55,7 +54,6 @@ class ReminderForm(forms.ModelForm):
 
 
 class MessageForm(forms.ModelForm):
-
     class Meta:
         model = Message
         fields = [
