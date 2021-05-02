@@ -129,7 +129,7 @@ STATICFILES_DIRS = [
 EMAIL_HOST = 'smtp.gmail.com'  # 'localhost'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'planthood.mokotow@gmail.com'
-EMAIL_HOST_PASSWORD = 'dkzkncjxqsrfrchc'
+EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = True
 # EMAIL_USE_SSL = False
 
