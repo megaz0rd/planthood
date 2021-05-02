@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
+import django_heroku
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -134,12 +135,12 @@ EMAIL_USE_TLS = True
 
 # Local settings
 
-try:
-    from planthood.local_settings import DATABASES
-except ModuleNotFoundError:
-    print("Brak konfiguracji bazy danych w pliku local_settings.py!")
-    print("Uzupełnij dane i spróbuj ponownie!")
-    exit(0)
+# try:
+#     from planthood.local_settings import DATABASES
+# except ModuleNotFoundError:
+#     print("Brak konfiguracji bazy danych w pliku local_settings.py!")
+#     print("Uzupełnij dane i spróbuj ponownie!")
+#     exit(0)
 
-# # Activate Django-Heroku.
-# django_heroku.settings(locals())
+# Activate Django-Heroku.
+django_heroku.settings(locals())
