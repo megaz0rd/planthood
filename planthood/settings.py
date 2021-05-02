@@ -135,23 +135,12 @@ EMAIL_USE_TLS = True
 
 # Local settings
 
-# try:
-#     from planthood.local_settings import DATABASES
-# except ModuleNotFoundError:
-#     print("Brak konfiguracji bazy danych w pliku local_settings.py!")
-#     print("Uzupełnij dane i spróbuj ponownie!")
-#     exit(0)
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'test_planthood',
-        'HOST': 'localhost',
-        'PASSWORD': 'coderslab',
-        'USER': 'megaz0rd',
-        'PORT': 5432
-    }
-}
+try:
+    from planthood.local_settings import DATABASES
+except ModuleNotFoundError:
+    print("Brak konfiguracji bazy danych w pliku local_settings.py!")
+    print("Uzupełnij dane i spróbuj ponownie!")
+    exit(0)
 
 # Activate Django-Heroku.
 django_heroku.settings(locals())
