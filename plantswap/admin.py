@@ -14,7 +14,7 @@ admin.site.register(Plant, PlantAdmin)
 
 class ReminderAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'plant', 'previous_care_day',
-                    'next_care_day', 'cycle', 'creator')
+                    'next_care_day', 'cycle', 'is_completed', 'creator')
     search_fields = ('name', 'plant')
     readonly_fields = ('id', 'previous_care_day', 'next_care_day', 'creator')
 
@@ -23,7 +23,7 @@ admin.site.register(Reminder, ReminderAdmin)
 
 
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'from_user', 'to_user', 'finished')
+    list_display = ('id', 'from_user', 'to_user', 'is_finished')
     search_fields = ('plant', 'from_user', 'to_user')
     readonly_fields = ('id', 'message')
 

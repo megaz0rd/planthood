@@ -60,7 +60,7 @@ class Transaction(models.Model):
     from_user = models.ForeignKey(settings.AUTH_USER_MODEL,
                                   on_delete=models.CASCADE,
                                   related_name='owner')
-    finished = models.BooleanField(default=False)
+    is_finished = models.BooleanField(default=False)
     message = models.ManyToManyField(Message)
 
     class Meta:
@@ -80,9 +80,10 @@ class Reminder(models.Model):
     plant = models.ForeignKey(Plant, on_delete=models.CASCADE)
     previous_care_day = models.DateField()
     cycle = models.SmallIntegerField(default=7)
+    next_care_day = models.DateField()  # field not visible for user
     creator = models.ForeignKey(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE)
-    next_care_day = models.DateField()  # field not visible for user
+    is_completed = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         self.next_care_day = self.previous_care_day + timedelta(

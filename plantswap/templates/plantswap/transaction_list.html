@@ -33,7 +33,7 @@ Rośliny w okolicy
         <div class="col-md-3 themed-grid-col">
             <a href="{% url 'plantswap:transaction-detail' transaction.pk %}"
                class="btn btn-sm btn-outline-secondary">Szczegóły</a>
-            {% if not transaction.finished %}
+            {% if not transaction.is_finished %}
             <a href="{% url 'plantswap:transaction-finalize' transaction.pk %}"
                class="btn btn-sm btn-outline-success">Zakończ</a>
             <a href="{% url 'plantswap:transaction-delete' transaction.pk %}"
@@ -50,7 +50,7 @@ Rośliny w okolicy
         <div class="col-md-3 themed-grid-col">
             <a href="{% url 'plantswap:transaction-detail' transaction.pk %}"
                class="btn btn-sm btn-outline-secondary">Szczegóły</a>
-            {% if not transaction.finished %}
+            {% if not transaction.is_finished %}
             <a href="{% url 'plantswap:transaction-finalize' transaction.pk %}"
                class="btn btn-sm btn-outline-success">Zakończ</a>
             <a href="{% url 'plantswap:transaction-delete' transaction.pk %}"
@@ -69,7 +69,7 @@ Rośliny w okolicy
         <div class="col-md-3 themed-grid-col">
             <a href="{% url 'plantswap:transaction-detail' transaction.pk %}"
                class="btn btn-sm btn-outline-secondary">Szczegóły</a>
-            {% if not transaction.finished %}
+            {% if not transaction.is_finished %}
             <a href="{% url 'plantswap:transaction-finalize' transaction.pk %}"
                class="btn btn-sm btn-outline-success">Zakończ</a>
             <a href="{% url 'plantswap:transaction-delete' transaction.pk %}"
@@ -86,7 +86,7 @@ Rośliny w okolicy
         <div class="col-md-3 themed-grid-col">
             <a href="{% url 'plantswap:transaction-detail' transaction.pk %}"
                class="btn btn-sm btn-outline-secondary">Szczegóły</a>
-            {% if not transaction.finished %}
+            {% if not transaction.is_finished %}
             <a href="{% url 'plantswap:transaction-finalize' transaction.pk %}"
                class="btn btn-sm btn-outline-success">Zakończ</a>
             <a href="{% url 'plantswap:transaction-delete' transaction.pk %}"

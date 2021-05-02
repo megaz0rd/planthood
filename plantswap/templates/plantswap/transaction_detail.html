@@ -53,7 +53,7 @@
         Nie wymieniliście jeszcze między sobą wiadomości.
     {% endfor %}
     <br/><br/>
-    {% if not object.finished %}
+    {% if not object.is_finished %}
     <a href="{% url 'plantswap:message' object.pk %}"
        class="btn btn-info"> Odpowiedz</a>
     {% endif %}
