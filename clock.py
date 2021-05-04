@@ -1,9 +1,9 @@
-# import django
-# from django.conf import settings
-#
-#
-# settings.configure()
-# django.setup()
+import django
+from django.conf import settings
+
+
+settings.configure()
+django.setup()
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 
