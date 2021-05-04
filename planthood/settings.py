@@ -160,6 +160,8 @@ DATABASES = {
 }
 
 LOGGING_CONFIG = 'logging.config.dictConfig'
+FORCE_SCRIPT_NAME = '/'
+
 
 # Activate Django-Heroku.
 django_heroku.settings(locals())
