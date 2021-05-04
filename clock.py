@@ -1,26 +1,22 @@
+import os
 import django
-from django.conf import settings
-
-
-settings.configure()
-django.setup()
-
+from django.core import mail
 from apscheduler.schedulers.blocking import BlockingScheduler
 
-from django.core.mail import send_mail
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'planthood.settings')
+django.setup()
 
 sched = BlockingScheduler()
 
 
 @sched.scheduled_job('interval', minutes=3)
 def scheduled_job():
-    send_mail(
-        'test tematu',
-        'test treści',
-        'planthood.mokotow@gmail.com',
-        ['planthood.mokotow@gmail.com'],
-        fail_silently=False
-    )
+    with mail.get_connection() as connection:
+        mail.EmailMessage(
+            'test tematu', 'test treści', 'planthood.mokotow@gmail.com',
+            ['planthood.mokotow@gmail.com'],
+            connection=connection,
+        ).send()
     print('Reminders sent at 8am.')
 
 

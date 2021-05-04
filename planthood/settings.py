@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-import django_heroku
+# import django_heroku
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -59,6 +59,20 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'planthood.urls'
+
+# Database
+# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'test_planthood',
+        'HOST': 'localhost',
+        'PASSWORD': 'coderslab',
+        'USER': 'megaz0rd',
+        'PORT': 5432
+    }
+}
 
 TEMPLATES = [
     {
@@ -112,19 +126,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.0/howto/static-files/
-
-MEDIA_URL = "/media/"
-
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-
-# STATIC_URL = "/static/"
-#
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, "static"),
-# ]
-
 # Email settings
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -136,6 +137,19 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'planthood.mokotow@gmail.com'
 # EMAIL_USE_SSL = False
 
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/3.0/howto/static-files/
+
+MEDIA_URL = "/media/"
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+STATIC_URL = "/static/"
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+
 # Local settings
 
 # try:
@@ -145,19 +159,6 @@ DEFAULT_FROM_EMAIL = 'planthood.mokotow@gmail.com'
 #     print("Uzupełnij dane i spróbuj ponownie!")
 #     exit(0)
 
-# Database
-# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'test_planthood',
-        'HOST': 'localhost',
-        'PASSWORD': 'coderslab',
-        'USER': 'megaz0rd',
-        'PORT': 5432
-    }
-}
-
-# Activate Django-Heroku.
-django_heroku.settings(locals())
+# # Activate Django-Heroku.
+# django_heroku.settings(locals())
