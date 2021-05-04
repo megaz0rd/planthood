@@ -3,11 +3,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 # from plantswap.models import Reminder
 from django.core.mail import EmailMessage
 
-from planthood import settings
-
 sched = BlockingScheduler()
-
-settings.configure()
 
 
 @sched.scheduled_job('interval', minutes=3)
