@@ -1,20 +1,19 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 # from plantswap.models import Reminder
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 
 sched = BlockingScheduler()
 
 
 @sched.scheduled_job('interval', minutes=3)
 def scheduled_job():
-    send_mail(
+    email = EmailMessage(
         'test tematu',
         'test treści',
-        'planthood-mokotow@gmail.com',
-        ['planthood-mokotow@gmail.com'],
-        fail_silently=False
+        to=['planthood-mokotow@gmail.com']
     )
+    email.send()
     print('Reminders sent at 8am.')
 
 
