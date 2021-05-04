@@ -1,8 +1,8 @@
 import django
 from django.conf import settings
-from planthood import settings as planthood_defaults
 
-settings.configure(default_settings=planthood_defaults, DEBUG=True)
+
+settings.configure()
 django.setup()
 
 from apscheduler.schedulers.blocking import BlockingScheduler
