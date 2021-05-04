@@ -132,6 +132,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'planthood.mokotow@gmail.com'
 EMAIL_HOST_PASSWORD = 'dkzkncjxqsrfrchc'
 EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'planthood.mokotow@gmail.com'
 # EMAIL_USE_SSL = False
 
 # Local settings
