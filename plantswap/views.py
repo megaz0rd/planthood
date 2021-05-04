@@ -190,7 +190,7 @@ class MessageSendView(LoginRequiredMixin, UserPassesTestMixin,
         """Prevent user from sending message to user with whom user does not
         have a particular transaction or if the transaction is finished."""
 
-        if not self.get_transaction().finished:
+        if not self.get_transaction().is_finished:
             return self.request.user == self.get_transaction().from_user or \
                    self.request.user == self.get_transaction().to_user
         else:

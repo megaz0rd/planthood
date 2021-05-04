@@ -6,7 +6,7 @@ from django.core.mail import send_mail
 sched = BlockingScheduler()
 
 
-@sched.scheduled_job('cron', day_of_week='mon-sat', hour=8)
+@sched.scheduled_job('cron', day_of_week='mon-sat', hour=11)
 def scheduled_job():
     send_mail(
         'test tematu',
