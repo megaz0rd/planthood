@@ -1,3 +1,10 @@
+import django
+from django.conf import settings
+from planthood import settings as planthood_defaults
+
+settings.configure(default_settings=planthood_defaults, DEBUG=True)
+django.setup()
+
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 # from plantswap.models import Reminder
