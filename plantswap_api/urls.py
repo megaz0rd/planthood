@@ -3,9 +3,9 @@ from rest_framework.routers import SimpleRouter
 
 from .views import (
     PlantViewSet,
-    # MatchViewSet,
+    ReminderViewSet,
     TransactionViewSet,
-    StatsView
+    StatsView, UserViewSet
 )
 
 router = SimpleRouter()
@@ -13,7 +13,11 @@ router = SimpleRouter()
 router.register("plants", PlantViewSet,
                 basename='plants')
 router.register("transactions", TransactionViewSet,
-                basename='transactions')
+                basename='transactions'),
+router.register("reminders", ReminderViewSet,
+                basename='reminders'),
+router.register("users", UserViewSet,
+                basename='users'),
 
 urlpatterns = router.urls
 urlpatterns += [
