@@ -251,7 +251,7 @@ class TransactionDeleteView(LoginRequiredMixin, UserPassesTestMixin,
         is not a part of"""
 
         return self.request.user == self.get_object().to_user or \
-            self.request.user == self.get_object().from_user
+               self.request.user == self.get_object().from_user
 
 
 class TransactionEndView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -287,7 +287,7 @@ class TransactionEndView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         of"""
 
         return self.request.user == self.get_object().from_user or \
-            self.request.user == self.get_object().to_user
+               self.request.user == self.get_object().to_user
 
 
 class ReminderCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
@@ -314,6 +314,13 @@ class ReminderListView(LoginRequiredMixin, ListView):
 
     model = Reminder
     context_object_name = 'reminders'
+
+    def get_context_data(self, **kwargs):
+        """Add current date to context"""
+
+        context = super(ReminderListView, self).get_context_data(**kwargs)
+        context['today'] = today
+        return context
 
     def get_queryset(self):
         """Show only those reminders created by logged user"""
