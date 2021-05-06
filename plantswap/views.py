@@ -134,6 +134,8 @@ class PlantUpdateView(LoginRequiredMixin, UserPassesTestMixin,
 
 
 class AddToTransactionView(View):
+    """Creates a transaction and redirects user to a message form. If a
+    transaction exists, do the same."""
 
     def get(self, request, *args, **kwargs):
         plant = get_object_or_404(Plant, pk=self.kwargs['pk'])
@@ -240,6 +242,7 @@ class TransactionListView(LoginRequiredMixin, ListView):
 class TransactionDeleteView(LoginRequiredMixin, UserPassesTestMixin,
                             DeleteView):
     """Allows user to delete an unfinished transaction"""
+
     model = Transaction
     success_url = reverse_lazy('plantswap:transaction-list')
 
@@ -248,7 +251,7 @@ class TransactionDeleteView(LoginRequiredMixin, UserPassesTestMixin,
         is not a part of"""
 
         return self.request.user == self.get_object().to_user or \
-               self.request.user == self.get_object().from_user
+            self.request.user == self.get_object().from_user
 
 
 class TransactionEndView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -260,7 +263,8 @@ class TransactionEndView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     success_url = reverse_lazy('plantswap:transaction-list')
 
     def form_valid(self, form):
-        """If transaction ends change, change plant owner"""
+        """If user ends a transaction, change plant owner"""
+
         form.save(commit=False)
         plant = get_object_or_404(Plant, pk=self.get_object().plant.pk)
         if plant.status == 1:
@@ -283,7 +287,7 @@ class TransactionEndView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         of"""
 
         return self.request.user == self.get_object().from_user or \
-               self.request.user == self.get_object().to_user
+            self.request.user == self.get_object().to_user
 
 
 class ReminderCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
@@ -306,12 +310,13 @@ class ReminderCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
 
 class ReminderListView(LoginRequiredMixin, ListView):
-    """Shows user a list of reminders which user created."""
+    """Shows a list of reminders."""
 
     model = Reminder
     context_object_name = 'reminders'
 
     def get_queryset(self):
+        """Show only those reminders created by logged user"""
         return self.model.objects.filter(creator=self.request.user)
 
 
@@ -389,7 +394,8 @@ class ReminderConfirmView(LoginRequiredMixin, UserPassesTestMixin,
 
 
 class ReminderDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    """Allows user to delete an reminder"""
+    """Allows user to delete an reminder."""
+
     model = Reminder
     success_url = reverse_lazy('plantswap:reminder-list')
 

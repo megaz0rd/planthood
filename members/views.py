@@ -11,11 +11,16 @@ from .models import UserProfile
 
 
 class UserRegisterView(SuccessMessageMixin, CreateView):
+    """Powers a form to register a user and create a user profile."""
+
     template_name = 'registration/register.html'
     form_class = UserRegistrationForm
     success_url = reverse_lazy('login')
 
     def form_valid(self, form, *args, **kwargs):
+        """Waits for saving user model to creates user profile. Then
+        authenticates user and logs in."""
+
         user = form.save(commit=False)
         street = form.cleaned_data['street']
         building_number = form.cleaned_data['building_number']
@@ -33,6 +38,8 @@ class UserRegisterView(SuccessMessageMixin, CreateView):
 
 
 class UserEditView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    """Powers a form to edit a user model"""
+
     template_name = 'registration/edit_profile.html'
     form_class = UserEditForm
     success_url = reverse_lazy('index')
@@ -40,22 +47,13 @@ class UserEditView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     def get_object(self):
         return self.request.user
 
-    # def form_valid(self, form, *args, **kwargs):
-    #     user = form.save(commit=False)
-    #     street = form.cleaned_data['street']
-    #     building_number = form.cleaned_data['building_number']
-    #     user.save()
-    #     profile = UserProfile.objects.get(user=user)
-    #     profile.street = street
-    #     profile.building_number = building_number
-    #     profile.save()
-    #     return super(UserEditView, self).form_valid(form)
-
     def get_success_message(self, cleaned_data):
         return "Twoje konto zostało zaktualizowane!"
 
 
 class UserPasswordChangeView(SuccessMessageMixin, PasswordChangeView):
+    """Powers a form to edit a user's password"""
+
     template_name = 'registration/change_password.html'
     form_class = PasswordChangeForm
     success_url = reverse_lazy('index')
@@ -65,6 +63,8 @@ class UserPasswordChangeView(SuccessMessageMixin, PasswordChangeView):
 
 
 class UserProfileEditView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    """Powers a form to edit a user profile"""
+
     template_name = 'registration/edit_profile.html'
     form_class = UserProfileEditForm
     success_url = reverse_lazy('index')
