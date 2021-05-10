@@ -18,8 +18,6 @@ Rośliny w okolicy
     </div>
 {% endif %}
 
-</br>
-
 {% for transaction in transactions %}
 <div class="container row mb-3">
     {% if transaction.plant.owner == user %}
@@ -94,13 +92,11 @@ Rośliny w okolicy
             {% endif %}
         </div>
         {% endif %}
-
     {% endif %}
 </div>
-
     {% empty %}
     <div class="col-xxl-4">
-        Nie masz jeszcze żadnej dostępnej wymiany.
+        Nie masz żadnej dostępnej wymiany.
     </div>
 {% endfor %}
 
