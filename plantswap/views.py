@@ -133,7 +133,7 @@ class PlantUpdateView(LoginRequiredMixin, UserPassesTestMixin,
         return "Roślina pomyślnie zaktualizowana!"
 
 
-class AddToTransactionView(View):
+class AddToTransactionView(LoginRequiredMixin, View):
     """Creates a transaction and redirects user to a message form. If a
     transaction exists, do the same."""
 
@@ -227,7 +227,7 @@ class TransactionDetailView(LoginRequiredMixin, UserPassesTestMixin,
 
 
 class TransactionListView(LoginRequiredMixin, ListView):
-    """Shows user a list of transactions which user is a part of"""
+    """Shows user a list of unfinished transactions which user is a part of"""
 
     model = Transaction
     context_object_name = 'transactions'
@@ -236,6 +236,8 @@ class TransactionListView(LoginRequiredMixin, ListView):
         return self.model.objects.filter(
             Q(to_user=self.request.user) |
             Q(from_user=self.request.user)
+        ).filter(
+            is_finished=False
         )
 
 
@@ -259,7 +261,7 @@ class TransactionEndView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     model = Transaction
     pk_url_kwarg = 'pk'
-    fields = ['finished']
+    fields = ['is_finished']
     success_url = reverse_lazy('plantswap:transaction-list')
 
     def form_valid(self, form):
@@ -278,8 +280,8 @@ class TransactionEndView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                                  photo=plant.photo,
                                  status=3)
         plant.status = 4
-        form.save()
         plant.save()
+        form.save()
         return super(TransactionEndView, self).form_valid(form)
 
     def test_func(self):
