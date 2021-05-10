@@ -13,16 +13,6 @@ def test_prepopulated_db(set_up):
     assert len(Transaction.objects.all()) == 50
 
 
-def test_new_user(django_user_model, set_up):
-    django_user_model.objects.create(username='foo', password='bar')
-    assert len(User.objects.all()) == 51
-
-
-def test_an_admin_view(admin_client):
-    response = admin_client.get('/admin/')
-    assert response.status_code == 200
-
-
 def test_mail(mailoutbox, set_up):
     recipients = []
 

@@ -1,5 +1,5 @@
-from members.models import User, UserProfile
-from plantswap.models import Transaction, Plant
+from members.models import User
+from plantswap.models import Transaction
 from plantswap.tests.utils import (
     random_plant,
     random_reminder,
@@ -67,22 +67,6 @@ def test_profile_views_with_non_authenticated_client(client):
     assert response.status_code == 302
     response = client.get('/accounts/edit_profile/')
     assert response.status_code == 302
-
-
-def test_non_authenticated_views(client):
-    """Tests that a non-logged in user can see main, register, login and
-    reset password pages"""
-
-    response = client.get('/')
-    assert response.status_code == 200
-    response = client.get('/accounts/register/')
-    assert response.status_code == 200
-    response = client.get('/accounts/login/')
-    assert response.status_code == 200
-    response = client.get('/accounts/password_reset/')
-    assert response.status_code == 200
-    response = client.get('/accounts/password_reset/done/')
-    assert response.status_code == 200
 
 
 def test_plant_views_with_authenticated_client(client, set_up):
@@ -189,18 +173,3 @@ def test_reminder_views_with_authenticated_client(client, set_up):
     assert response.status_code == 403
     response = client.get(f'/reminders/delete/{reminder.pk}/')
     assert response.status_code == 403
-
-
-def test_profile_views_with_authenticated_client(client, set_up):
-    """Tests that a logged in user can access user profile views"""
-
-    user = User.objects.first()
-    UserProfile.objects.create(user=user, street='street', building_number=4)
-    client.force_login(user)
-
-    response = client.get('/accounts/address/')
-    assert response.status_code == 200
-    response = client.get('/accounts/password/')
-    assert response.status_code == 200
-    response = client.get('/accounts/edit_profile/')
-    assert response.status_code == 200
