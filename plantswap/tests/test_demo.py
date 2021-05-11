@@ -1,3 +1,4 @@
+import pytest
 from django.core import mail
 from django.contrib.auth.models import User
 
@@ -6,6 +7,7 @@ from plantswap.models import Plant, Reminder, Transaction
 from plantswap_api.utils import today
 
 
+@pytest.mark.django_db
 def test_prepopulated_db(set_up):
     assert len(User.objects.all()) == 50
     assert len(Plant.objects.all()) == 50
@@ -13,7 +15,8 @@ def test_prepopulated_db(set_up):
     assert len(Transaction.objects.all()) == 50
 
 
-def test_mail(mailoutbox, set_up):
+@pytest.mark.django_db
+def test_send_reminder(mailoutbox, set_up):
     recipients = []
 
     for reminder in Reminder.objects.all():

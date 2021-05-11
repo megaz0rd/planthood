@@ -1,16 +1,21 @@
-from members.models import UserProfile, User
+import pytest
+
+from members.models import User, UserProfile
 
 
-def test_new_user(django_user_model):
-    django_user_model.objects.create(username='foo', password='bar')
+@pytest.mark.django_db
+def test_new_user(create_user):
+    create_user()
     assert len(User.objects.all()) == 1
 
 
+@pytest.mark.django_db
 def test_an_admin_view(admin_client):
     response = admin_client.get('/admin/')
     assert response.status_code == 200
 
 
+@pytest.mark.django_db
 def test_non_authenticated_views(client):
     """Tests that a non-logged in user can see main, register, login and
     reset password pages"""
@@ -27,13 +32,23 @@ def test_non_authenticated_views(client):
     assert response.status_code == 200
 
 
-def test_profile_views_with_authenticated_client(client):
+@pytest.mark.django_db
+def test_profile_views_with_non_authenticated_client(client):
+    """Tests that a non-logged in user is redirected"""
+
+    response = client.get('/accounts/address/')
+    assert response.status_code == 302
+    response = client.get('/accounts/password/')
+    assert response.status_code == 302
+    response = client.get('/accounts/edit_profile/')
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_profile_views_with_authenticated_client(client, create_profile):
     """Tests that a logged in user can access user profile views"""
 
-    user = User.objects.create(username='foo', password='bar')
-    UserProfile.objects.create(user=user, street='street', building_number=4)
-    client.force_login(user)
-
+    assert len(UserProfile.objects.all()) == 1
     response = client.get('/accounts/address/')
     assert response.status_code == 200
     response = client.get('/accounts/password/')

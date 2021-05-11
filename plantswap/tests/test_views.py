@@ -1,4 +1,5 @@
-from members.models import User
+import pytest
+
 from plantswap.models import Transaction
 from plantswap.tests.utils import (
     random_plant,
@@ -7,9 +8,11 @@ from plantswap.tests.utils import (
 )
 
 
-def test_plant_views_with_non_authenticated_client(client, set_up):
-    """Tests that a non-logged in user is redirected"""
+@pytest.mark.django_db
+def test_login_required_with_non_authenticated_client(client, set_up):
+    """Tests that a non-logged in user is redirected to /accounts/login/"""
 
+    # plants views
     response = client.get('/plants/')
     assert response.status_code == 302
     response = client.get(f'/plants/edit/{random_plant().pk}/')
@@ -20,13 +23,8 @@ def test_plant_views_with_non_authenticated_client(client, set_up):
     assert response.status_code == 302
     response = client.get(f'/add-to-transaction/{random_plant().pk}')
     assert response.status_code == 301
-    redirect = client.get(response.url)
-    assert redirect.status_code == 302
 
-
-def test_reminder_views_with_non_authenticated_client(client, set_up):
-    """Tests that a non-logged in user is redirected"""
-
+    # reminders views
     response = client.get('/reminders/')
     assert response.status_code == 302
     response = client.get('/reminders/new/')
@@ -38,10 +36,7 @@ def test_reminder_views_with_non_authenticated_client(client, set_up):
     response = client.get(f'/reminders/delete/{random_reminder().pk}/')
     assert response.status_code == 302
 
-
-def test_transaction_views_with_non_authenticated_client(client, set_up):
-    """Tests that a non-logged in user is redirected"""
-
+    # transaction views
     response = client.get('/transactions/')
     assert response.status_code == 302
     response = client.get(
@@ -58,27 +53,14 @@ def test_transaction_views_with_non_authenticated_client(client, set_up):
     assert response.status_code == 302
 
 
-def test_profile_views_with_non_authenticated_client(client):
-    """Tests that a non-logged in user is redirected"""
-
-    response = client.get('/accounts/address/')
-    assert response.status_code == 302
-    response = client.get('/accounts/password/')
-    assert response.status_code == 302
-    response = client.get('/accounts/edit_profile/')
-    assert response.status_code == 302
-
-
-def test_plant_views_with_authenticated_client(client, set_up):
-    """Tests that a logged in user can views plants"""
+@pytest.mark.django_db
+def test_plant_requests_with_authenticated_client(client, set_up):
+    """Tests that a logged in user is allowed or forbidden to view user's
+    plants"""
 
     plant = random_plant()
     user = plant.owner
     client.force_login(user)
-    response = client.get('/plants/')
-    assert response.status_code == 200
-    response = client.get('/plants/new/')
-    assert response.status_code == 200
 
     if plant.status == 4:
         # User is forbidden to see plant that user owns no more
@@ -87,19 +69,46 @@ def test_plant_views_with_authenticated_client(client, set_up):
         response = client.get(f'/plants/edit/{plant.pk}/')
         assert response.status_code == 403
     else:
-        # User can access to edit form or detail page of user's own plant
+        # User is allowed to edit form or to see detail page of user's plant
         response = client.get(f'/plants/edit/{plant.pk}/')
         assert response.status_code == 200
         response = client.get(f'/plants/detail/{plant.pk}/')
         assert response.status_code == 200
 
 
-def test_plant_views_permissions_with_authenticated_client(client, set_up,
-                                                           other_user_plant):
+@pytest.mark.django_db
+def test_reminder_requests_with_authenticated_client(client, set_up):
+    """Tests that a logged in user is allowed or forbidden to view reminders"""
+    reminder = random_reminder()
+    user = reminder.creator
+    client.force_login(user)
+
+    response = client.get(f'/reminders/edit/{reminder.pk}/')
+    assert response.status_code == 200
+    response = client.get(f'/reminders/confirm/{reminder.pk}/')
+    assert response.status_code == 200
+    response = client.get(f'/reminders/delete/{reminder.pk}/')
+    assert response.status_code == 200
+
+    while reminder.creator == user:
+        # Change reminder to see if user can see reminder set by an other user
+        reminder = random_reminder()
+
+    response = client.get(f'/reminders/edit/{reminder.pk}/')
+    assert response.status_code == 403
+    response = client.get(f'/reminders/confirm/{reminder.pk}/')
+    assert response.status_code == 403
+    response = client.get(f'/reminders/delete/{reminder.pk}/')
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_permissions_with_authenticated_client(
+        auto_login_user,
+        other_user_plant):
     """Tests a logged user's permissions to view an others' plants"""
 
-    user = User.objects.first()
-    client.force_login(user)
+    client, user = auto_login_user()
 
     # User can see details of an others' users plants if plant status is 1 or 2
     response = client.get(f"/plants/detail/{other_user_plant['plant1'].pk}/")
@@ -123,13 +132,13 @@ def test_plant_views_permissions_with_authenticated_client(client, set_up,
     assert response.status_code == 403
 
 
-def test_add_plant_to_transaction_view_with_authenticated_client(client,
-                                                                 set_up,
-                                                                 other_user_plant):
+@pytest.mark.django_db
+def test_add_plant_to_transaction_view_with_authenticated_client(
+        auto_login_user,
+        other_user_plant):
     """Tests that a logged in user can add an other plant to transaction"""
 
-    user = User.objects.first()
-    client.force_login(user)
+    client, user = auto_login_user()
 
     response = client.get(f"/add-to-transaction/"
                           f"{other_user_plant['plant1'].pk}")
@@ -144,32 +153,3 @@ def test_add_plant_to_transaction_view_with_authenticated_client(client,
     # Check if user can create message to transaction
     response = client.post(redirect.url)
     assert response.status_code == 200
-
-
-def test_reminder_views_with_authenticated_client(client, set_up):
-    """Tests that a logged in user can views reminders"""
-    reminder = random_reminder()
-    user = reminder.creator
-    client.force_login(user)
-
-    response = client.get('/reminders/')
-    assert response.status_code == 200
-    response = client.get('/reminders/new/')
-    assert response.status_code == 200
-    response = client.get(f'/reminders/edit/{reminder.pk}/')
-    assert response.status_code == 200
-    response = client.get(f'/reminders/confirm/{reminder.pk}/')
-    assert response.status_code == 200
-    response = client.get(f'/reminders/delete/{reminder.pk}/')
-    assert response.status_code == 200
-
-    while reminder.creator == user:
-        # Change reminder to see if user can see reminder set by an other user
-        reminder = random_reminder()
-
-    response = client.get(f'/reminders/edit/{reminder.pk}/')
-    assert response.status_code == 403
-    response = client.get(f'/reminders/confirm/{reminder.pk}/')
-    assert response.status_code == 403
-    response = client.get(f'/reminders/delete/{reminder.pk}/')
-    assert response.status_code == 403
