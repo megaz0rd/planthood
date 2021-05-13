@@ -97,7 +97,7 @@ def create_plant(auto_login_user):
 @pytest.fixture
 def create_reminder(create_plant):
     plant = Plant.objects.get(status=3)
-    Reminder.objects.create(name=random_care(), plant=plant,
+    Reminder.objects.create(name='WATER', plant=plant,
                             previous_care_day=datetime.strptime(
                                 fake.date(), '%Y-%m-%d'),
                             cycle=fake.random_int(min=1, max=14),

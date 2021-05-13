@@ -1,6 +1,5 @@
-import json
-
 import pytest
+from django.core import mail
 
 from plantswap.models import Transaction, Message
 
@@ -21,17 +20,31 @@ def test_get_absolute_url(create_transaction):
 
 
 @pytest.mark.django_db
-def test_add_message_to_transaction(client, create_transaction):
+def test_add_message_to_transaction(client, create_transaction, mailoutbox):
     assert Transaction.objects.count() == 2
     transaction = Transaction.objects.first()
     assert transaction.message.count() == 0
     message_data = {
-        'plant': transaction.plant,
-        'from_user': transaction.from_user,
-        'to_user': transaction.to_user,
+        'plant': transaction.plant.pk,
+        'from_user': transaction.from_user.pk,
+        'to_user': transaction.to_user.pk,
         'content': 'test_message'
     }
     url = f'/transactions/message/{transaction.pk}/'
     response = client.post(url, data=message_data)
-    assert response.status_code == 200
-    assert transaction.message.count() == 1
+    assert response.status_code == 302
+    assert transaction.message.filter(content='test_message').exists()
+    assert Message.objects.count() == 1
+
+    # mail.send_mail(f'Zainteresowanie rośliną: {transaction.plant.name}',
+    #                f'{message_data["content"]}',
+    #                'planthood.mokotow@gmail.com',
+    #                ['test@wp.pl'])
+    # # users in db dont have emails - in mailTo should be
+    # # [transaction.to_user.email]
+    # assert len(mailoutbox) == 1
+    # m = mailoutbox[0]
+    # assert m.subject == f'Zainteresowanie rośliną: {transaction.plant.name}'
+    # assert m.body == 'test_message'
+    # assert m.from_email == 'planthood.mokotow@gmail.com'
+    # assert list(m.to) == ['test@wp.pl']
