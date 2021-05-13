@@ -1,4 +1,4 @@
-from random import sample, randint, choice
+from random import choice
 from faker import Faker
 
 from members.models import User

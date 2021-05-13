@@ -8,6 +8,18 @@ from plantswap_api.utils import today
 
 
 @pytest.mark.django_db
+def test_new_user(create_user):
+    create_user()
+    assert len(User.objects.all()) == 1
+
+
+@pytest.mark.django_db
+def test_an_admin_view(admin_client):
+    response = admin_client.get('/admin/')
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
 def test_prepopulated_db(set_up):
     assert len(User.objects.all()) == 50
     assert len(Plant.objects.all()) == 50

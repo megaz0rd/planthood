@@ -5,6 +5,7 @@ from django.test import Client
 from django.contrib.auth.models import User
 from faker import Faker
 
+from members.models import UserProfile
 from plantswap.models import Plant, Reminder, Transaction
 from plantswap.tests.utils import (
     random_user,
@@ -29,7 +30,7 @@ def test_password():
 
 
 @pytest.fixture
-def create_user(django_user_model, test_password):
+def create_user(db, django_user_model, test_password):
     def make_user(**kwargs):
         kwargs['password'] = test_password
         if 'username' not in kwargs:
@@ -48,6 +49,14 @@ def auto_login_user(client, create_user, test_password):
             return client, user
 
     return make_auto_login
+
+
+@pytest.fixture
+def create_profile(client, auto_login_user):
+    client, user = auto_login_user()
+    return UserProfile.objects.create(user=user,
+                                      street='street',
+                                      building_number=1)
 
 
 @pytest.fixture
@@ -73,30 +82,40 @@ def other_user_plant(create_user):
 
 
 @pytest.fixture
-def create_own_plant(auto_login_user):
+def create_plant(auto_login_user):
     client, user = auto_login_user()
-    return Plant.objects.create(
-        name=fake.sentence(nb_words=2),
-        status=3,
-        photo='',
-        description=fake.sentence(),
-        owner=user
-    )
+    for i in range(4):
+        Plant.objects.create(
+            name=fake.sentence(nb_words=2),
+            status=i + 1,
+            photo='',
+            description=fake.sentence(),
+            owner=user
+        )
 
 
 @pytest.fixture
-def create_reminder(create_own_plant):
-    def set_reminder(plant):
-        reminder = Reminder.objects.create(
-            name=random_care(),
-            plant=plant,
-            previous_care_day=datetime.strptime(fake.date(), '%Y-%m-%d'),
-            cycle=fake.random_int(min=1, max=14),
-            creator=plant.owner
-        )
-        return reminder
+def create_reminder(create_plant):
+    plant = Plant.objects.get(status=3)
+    Reminder.objects.create(name=random_care(), plant=plant,
+                            previous_care_day=datetime.strptime(
+                                fake.date(), '%Y-%m-%d'),
+                            cycle=fake.random_int(min=1, max=14),
+                            creator=plant.owner)
 
-    return set_reminder
+
+@pytest.fixture
+def create_transaction(auto_login_user, create_reminder, create_user):
+    user2 = create_user(username='user2transaction')
+    plant_status_1 = Plant.objects.get(status=1)
+    plant_status_2 = Plant.objects.get(status=2)
+    transaction_1 = Transaction.objects.create(plant=plant_status_1,
+                                               from_user=plant_status_1.owner,
+                                               to_user=user2)
+    transaction_2 = Transaction.objects.create(plant=plant_status_2,
+                                               to_user=plant_status_2.owner,
+                                               from_user=user2)
+    return transaction_1, transaction_2
 
 
 @pytest.fixture
@@ -128,8 +147,3 @@ def set_up():
         elif plant.status == 2:
             Transaction.objects.create(plant=plant, from_user=user,
                                        to_user=plant.owner)
-
-
-# @pytest.fixture(autouse=True)
-# def enable_db_access_for_all_tests(db):
-#     pass
