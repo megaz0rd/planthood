@@ -1,12 +1,12 @@
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
 
-from .forms import UserEditForm, UserRegistrationForm, UserProfileEditForm
+from .forms import UserEditForm, UserRegistrationForm, UserProfileEditForm, \
+    UserPasswordChangeForm
 from .models import UserProfile
 
 
@@ -55,7 +55,7 @@ class UserPasswordChangeView(SuccessMessageMixin, PasswordChangeView):
     """Powers a form to edit a user's password"""
 
     template_name = 'registration/change_password.html'
-    form_class = PasswordChangeForm
+    form_class = UserPasswordChangeForm
     success_url = reverse_lazy('index')
 
     def get_success_message(self, cleaned_data):

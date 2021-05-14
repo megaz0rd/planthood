@@ -15,6 +15,15 @@ class PlantForm(forms.ModelForm):
             'photo',
             'status'
         ]
+        labels = {
+            'name': '',
+            'description': '',
+            'photo': 'Dodaj zdjęcie',
+        }
+        widgets = {
+            'name': forms.TextInput(attrs={'placeholder': 'Nazwa rośliny'}),
+            'description': forms.Textarea(attrs={'placeholder': 'Opis rośliny'})
+        }
 
     def __init__(self, *args, **kwargs):
         """Limits available choices option for choice field"""
@@ -22,14 +31,14 @@ class PlantForm(forms.ModelForm):
         limited_choices = [(choice[0], choice[1]) for choice in
                            STATUS_CHOICE if choice[0] == 1 or choice[0] == 2
                            or choice[0] == 3]
-        self.fields['status'] = forms.ChoiceField(choices=limited_choices)
+        self.fields['status'] = forms.ChoiceField(choices=limited_choices,
+                                                  label='')
 
 
 class ReminderForm(forms.ModelForm):
-    previous_care_day = forms.DateField(
-        widget=forms.SelectDateWidget(),
-        initial=timezone.now
-    )
+    previous_care_day = forms.DateField(widget=forms.SelectDateWidget(),
+                                        initial=timezone.now,
+                                        label='Data ostatniej pielęgnacji')
 
     class Meta:
         model = Reminder
@@ -40,7 +49,14 @@ class ReminderForm(forms.ModelForm):
             'cycle',
             'creator'
         ]
-        widgets = {'creator': forms.HiddenInput()}
+        labels = {
+            'name': 'Wybierz typ pielęgnacji',
+            'plant': 'Wybierz roślinę',
+            'cycle': 'Cykl',
+        }
+        widgets = {
+            'creator': forms.HiddenInput()
+        }
 
     def __init__(self, *args, **kwargs):
         """Grants access to the request object so that only plants of the
@@ -65,7 +81,8 @@ class MessageForm(forms.ModelForm):
         widgets = {
             'plant': forms.HiddenInput(),
             'from_user': forms.HiddenInput(),
-            'to_user': forms.HiddenInput()
+            'to_user': forms.HiddenInput(),
+            'content': forms.Textarea(attrs={'placeholder': ''})
         }
         labels = {'content': ''}
 

@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     # 3rd part apps
     'bootstrap4',
     'rest_framework',
+    'django.contrib.gis',
 
     # default apps
     'django.contrib.admin',
@@ -65,7 +66,7 @@ ROOT_URLCONF = 'planthood.urls'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'test_planthood',
         'HOST': 'localhost',
         'PASSWORD': 'coderslab',

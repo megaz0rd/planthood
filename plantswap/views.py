@@ -2,6 +2,7 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     UserPassesTestMixin
 )
+from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
@@ -82,12 +83,22 @@ class PlantDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Plant
     pk_url_kwarg = 'pk'
 
+    def get_distance(self):
+        p1 = GEOSGeometry(
+            f'SRID=4326;POINT({self.request.user.userprofile.latitude} {self.request.user.userprofile.longitude})')
+        p2 = GEOSGeometry(
+            f'SRID=4326;POINT({self.get_object().owner.userprofile.latitude} {self.get_object().owner.userprofile.longitude})')
+        distance = p1.distance(p2)
+        distance_in_km = distance * 100
+        return round(distance_in_km, 2)
+
     def get_context_data(self, **kwargs):
         """Add an extra key to an object context data"""
 
         context = super(PlantDetailView, self).get_context_data(**kwargs)
         reminders = self.get_object().reminder_set.all()
         context['reminders'] = reminders
+        context['distance'] = self.get_distance()
         return context
 
     def test_func(self):
@@ -409,7 +420,6 @@ class ReminderDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     success_url = reverse_lazy('plantswap:reminder-list')
 
     def test_func(self):
-        """Prevent user from delete a reminder which user
-        is not a part of"""
+        """Prevent user from delete a reminder which user is not a creator"""
 
         return self.request.user == self.get_object().creator
