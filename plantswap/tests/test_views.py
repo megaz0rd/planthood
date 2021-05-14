@@ -191,6 +191,3 @@ def test_add_plant_to_transaction_view_with_authenticated_client(
     transaction_query = Transaction.objects.filter(
         plant=other_user_plant['plant1'])
     assert redirect.url == f'/transactions/message/{transaction_query[0].pk}/'
-    # Check if user can create message to transaction
-    response = client.post(redirect.url)
-    assert response.status_code == 200

@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-# import django_heroku
+import django_heroku
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -25,7 +25,7 @@ SECRET_KEY = '&6lq@jo+6g6nm%2=9vomf9h(g(1ykp0susr+3j)p@#fo_tyn-9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['boiling-wave-63263.herokuapp.com']
 
 # Application definition
 
@@ -137,6 +137,13 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'planthood.mokotow@gmail.com'
 # EMAIL_USE_SSL = False
 
+# Rest framework pagination
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
@@ -160,5 +167,5 @@ STATICFILES_DIRS = [
 #     exit(0)
 
 
-# # Activate Django-Heroku.
-# django_heroku.settings(locals())
+# Activate Django-Heroku.
+django_heroku.settings(locals())
