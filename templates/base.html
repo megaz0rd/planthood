@@ -1,6 +1,6 @@
 {% load bootstrap4 %}
-
-<!DOCTYPE html>
+{% load static %}
+<!DOCTYPE HTML>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,9 +8,6 @@
           content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>{% block title %}{% endblock %} |
         Planthood </title>
-
-    {{ form.media }}
-
 
     {% bootstrap_css %}
     {% bootstrap_javascript jquery='full' %}

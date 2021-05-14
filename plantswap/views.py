@@ -84,13 +84,21 @@ class PlantDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     pk_url_kwarg = 'pk'
 
     def get_distance(self):
-        p1 = GEOSGeometry(
-            f'SRID=4326;POINT({self.request.user.userprofile.latitude} {self.request.user.userprofile.longitude})')
-        p2 = GEOSGeometry(
-            f'SRID=4326;POINT({self.get_object().owner.userprofile.latitude} {self.get_object().owner.userprofile.longitude})')
-        distance = p1.distance(p2)
-        distance_in_km = distance * 100
-        return round(distance_in_km, 2)
+        """Calculate distance between request.user and plant.owner using
+        PostGIS"""
+        try:
+            p1 = GEOSGeometry(
+                f'SRID=4326;POINT({self.request.user.userprofile.latitude} '
+                f'{self.request.user.userprofile.longitude})')
+            p2 = GEOSGeometry(
+                f'SRID=4326;POINT('
+                f'{self.get_object().owner.userprofile.latitude} '
+                f'{self.get_object().owner.userprofile.longitude})')
+            distance = p1.distance(p2)
+            distance_in_km = distance * 100
+            return round(distance_in_km, 2)
+        except Exception:
+            pass
 
     def get_context_data(self, **kwargs):
         """Add an extra key to an object context data"""
@@ -158,14 +166,18 @@ class AddToTransactionView(LoginRequiredMixin, View):
             return redirect('plantswap:message', pk=transaction_query[0].pk)
         else:
             if plant.status == 1:
-                transaction = Transaction.objects.create(from_user=plant.owner,
-                                                         to_user=request.user,
-                                                         plant=plant)
+                transaction = Transaction.objects.create(
+                    from_user=plant.owner,
+                    to_user=request.user,
+                    plant=plant
+                )
                 return redirect('plantswap:message', pk=transaction.id)
             elif plant.status == 2:
-                transaction = Transaction.objects.create(to_user=plant.owner,
-                                                         from_user=request.user,
-                                                         plant=plant)
+                transaction = Transaction.objects.create(
+                    to_user=plant.owner,
+                    from_user=request.user,
+                    plant=plant
+                )
                 return redirect('plantswap:message', pk=transaction.id)
 
 
@@ -234,7 +246,7 @@ class TransactionDetailView(LoginRequiredMixin, UserPassesTestMixin,
         is not a part of"""
 
         return self.request.user == self.get_object().to_user or \
-               self.request.user == self.get_object().from_user
+            self.request.user == self.get_object().from_user
 
 
 class TransactionListView(LoginRequiredMixin, ListView):
@@ -264,7 +276,7 @@ class TransactionDeleteView(LoginRequiredMixin, UserPassesTestMixin,
         is not a part of"""
 
         return self.request.user == self.get_object().to_user or \
-               self.request.user == self.get_object().from_user
+            self.request.user == self.get_object().from_user
 
 
 class TransactionEndView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -300,7 +312,7 @@ class TransactionEndView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         of"""
 
         return self.request.user == self.get_object().from_user or \
-               self.request.user == self.get_object().to_user
+            self.request.user == self.get_object().to_user
 
 
 class ReminderCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
@@ -390,8 +402,7 @@ class ReminderConfirmView(LoginRequiredMixin, UserPassesTestMixin,
 
         confirm = form.save(commit=False)
         if form.cleaned_data['next_care_day'] > today:
-            """If task is confirmed earlier, set care day for 
-            today"""
+            """If task is confirmed earlier, set care day for today"""
             confirm.previous_care_day = today
         elif form.cleaned_data['previous_care_day'] < today:
             """If task is overdue set previous care day for today"""

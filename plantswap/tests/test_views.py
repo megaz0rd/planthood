@@ -144,13 +144,14 @@ def test_other_user_transactions_views_with_authenticated_client(client,
         ('/plants/detail/', 403),
         ('/plants/edit/', 403),
 ))
-def test_other_user_plants_views_with_authenticated_client(client,
+def test_other_user_plants_views_with_authenticated_client(auto_login_user,
                                                            set_up,
                                                            url,
                                                            status_code):
-    """Test thad user is forbidden to:
+    """Test that user is forbidden to:
      - access form to edit the others' users plants
      - see details of the others' users plants if their status is 3 and 4"""
+    client, user = auto_login_user()
     response = client.get(f'{url}{Plant.objects.filter(status=3).first().pk}/')
     assert response.status_code == status_code
     response = client.get(f'{url}{Plant.objects.filter(status=4).first().pk}/')

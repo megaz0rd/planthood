@@ -83,19 +83,28 @@ class UserPasswordChangeForm(PasswordChangeForm):
     error_messages = {'password_incorrect': 'Stare hasło jest niepoprawne'}
     old_password = forms.CharField(required=True, label='Stare hasło',
                                    widget=forms.PasswordInput(
-                                       attrs={'class': 'form-control'}),
+                                       attrs={
+                                           'class': 'form-control'
+                                       }),
                                    error_messages={
-                                       'required': 'Hasło nie może być puste'})
+                                       'required': 'Hasło nie może być puste'
+                                   })
     new_password1 = forms.CharField(required=True, label='Nowe hasło',
                                     widget=forms.PasswordInput(
-                                        attrs={'class': 'form-control'}),
+                                        attrs={
+                                            'class': 'form-control'
+                                        }),
                                     error_messages={
-                                        'required': 'Hasło nie może być puste'})
+                                        'required': 'Hasło nie może być puste'
+                                    })
     new_password2 = forms.CharField(required=True, label='Powtórz nowe hasło',
                                     widget=forms.PasswordInput(
-                                        attrs={'class': 'form-control'}),
+                                        attrs={
+                                            'class': 'form-control'
+                                        }),
                                     error_messages={
-                                        'required': 'Hasło nie może być puste'})
+                                        'required': 'Hasło nie może być puste'
+                                    })
 
 
 class Meta:

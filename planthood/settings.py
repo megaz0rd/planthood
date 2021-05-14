@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-import django_heroku
+# import django_heroku
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -25,7 +25,7 @@ SECRET_KEY = '&6lq@jo+6g6nm%2=9vomf9h(g(1ykp0susr+3j)p@#fo_tyn-9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['boiling-wave-63263.herokuapp.com']
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -167,6 +167,6 @@ STATICFILES_DIRS = [
 #     print("Uzupełnij dane i spróbuj ponownie!")
 #     exit(0)
 
-
-# Activate Django-Heroku.
-django_heroku.settings(locals())
+#
+# # Activate Django-Heroku.
+# django_heroku.settings(locals())

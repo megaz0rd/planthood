@@ -22,7 +22,9 @@ class PlantForm(forms.ModelForm):
         }
         widgets = {
             'name': forms.TextInput(attrs={'placeholder': 'Nazwa rośliny'}),
-            'description': forms.Textarea(attrs={'placeholder': 'Opis rośliny'})
+            'description': forms.Textarea(attrs={
+                'placeholder': 'Opis rośliny'
+            })
         }
 
     def __init__(self, *args, **kwargs):

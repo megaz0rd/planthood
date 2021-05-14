@@ -4,8 +4,10 @@ from .models import UserProfile
 
 
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'street', 'building_number')
-    search_fields = ('user', 'street', 'building_number')
+    list_display = ('user', 'street', 'building_number', 'latitude',
+                    'longitude')
+    search_fields = ('user', 'street', 'building_number', 'latitude',
+                     'longitude')
     readonly_fields = ('id',)
 
 
