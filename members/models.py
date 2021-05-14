@@ -26,7 +26,7 @@ class UserProfile(models.Model):
     def save(self, *args, **kwargs):
         if GOOGLE_MAPS_API_KEY:
             address = " ".join(
-                [self.street, self.building_number, self.city])
+                [self.street, str(self.building_number), self.city])
             api_response = requests.get(
                 'https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}'.format(
                     address, GOOGLE_MAPS_API_KEY))

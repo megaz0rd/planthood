@@ -1,6 +1,5 @@
 from datetime import timedelta
 
-from django.contrib.gis.geos import Point, GEOSGeometry
 from django.conf import settings
 from django.db import models
 from django.urls import reverse_lazy
