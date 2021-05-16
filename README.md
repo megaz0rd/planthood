@@ -5,6 +5,9 @@ okolicy. Dodatkowo aplikacja ma przypominać użytkownikowi mailem o zaplanowane
 pielęgnacji posiadanych przez niego roślin. Aplikacja gromadzi też statystyki
 wymian z ostatnich dni/tygodni/miesięcy.
 
+Zbudowana przy wykorzystaniu: Python 3.9, Django 3.0.14, Bootstrap4,
+PostgreSQL/PostGIS, DRF 3.11.2, APScheduler 3.7.0
+
 # Wymagania
 
 ## Wymiana
@@ -133,5 +136,4 @@ COULD HAVE
 
 ## TBD
 
-* obsługa powiadomień
-* obliczanie odległości między użytkownikami
+* RestAPI
