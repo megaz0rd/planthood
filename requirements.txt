@@ -21,6 +21,7 @@ gunicorn==20.1.0
 idna==2.10
 inflection==0.5.1
 iniconfig==1.1.1
+ipython>2
 mccabe==0.6.1
 packaging==20.9
 pika==1.2.0
