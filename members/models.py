@@ -1,11 +1,8 @@
+import os
+
 import requests
 from django.db import models
 from django.contrib.auth import get_user_model
-
-try:
-    from planthood.local_settings import GOOGLE_MAPS_API_KEY
-except ModuleNotFoundError:
-    pass
 
 User = get_user_model()
 
@@ -32,8 +29,12 @@ class UserProfile(models.Model):
                     address, GOOGLE_MAPS_API_KEY))
             api_response_dict = api_response.json()
             if api_response_dict['status'] == 'OK':
-                self.latitude = api_response_dict['results'][0]['geometry']['location']['lat']
-                self.longitude = api_response_dict['results'][0]['geometry']['location']['lng']
+                self.latitude = \
+                    api_response_dict['results'][0]['geometry']['location'][
+                        'lat']
+                self.longitude = \
+                    api_response_dict['results'][0]['geometry']['location'][
+                        'lng']
 
             super(UserProfile, self).save(*args, **kwargs)
         else:

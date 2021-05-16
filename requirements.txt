@@ -7,13 +7,13 @@ coverage==5.5
 curtsies==0.3.5
 cwcwidth==0.1.4
 dj-database-url==0.5.0
-Django==3.0.14
+Django~=3.0.6
 django-bootstrap-pagination==1.7.1
 django-bootstrap4==2.3.1
 django-extensions==2.2.9
 django-heroku==0.3.1
 django-versatileimagefield==2.0
-djangorestframework==3.11.0
+djangorestframework~=3.11.12
 Faker==8.1.2
 flake8==3.9.1
 greenlet==1.0.0
@@ -34,7 +34,7 @@ pycodestyle==2.7.0
 pyflakes==2.3.1
 Pygments==2.8.1
 pyparsing==2.4.7
-pytest==6.2.3
+pytest~=5.4.2
 pytest-cov==2.11.1
 pytest-django==4.2.0
 python-dateutil==2.8.1

@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-# import django_heroku
+import django_heroku
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '&6lq@jo+6g6nm%2=9vomf9h(g(1ykp0susr+3j)p@#fo_tyn-9'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -60,20 +60,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'planthood.urls'
-
-# Database
-# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'test_planthood',
-        'HOST': 'localhost',
-        'PASSWORD': 'coderslab',
-        'USER': 'megaz0rd',
-        'PORT': 5432
-    }
-}
 
 TEMPLATES = [
     {
