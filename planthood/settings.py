@@ -10,8 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-# import django_heroku
+import django_heroku
 import os
+import dotenv
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -19,8 +20,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '&6lq@jo+6g6nm%2=9vomf9h(g(1ykp0susr+3j)p@#fo_tyn-9'
+dotenv_file = os.path.join(BASE_DIR, ".env")
+if os.path.isfile(dotenv_file):
+    dotenv.load_dotenv(dotenv_file)
+
+# UPDATE secret key
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -60,20 +65,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'planthood.urls'
-
-# Database
-# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'test_planthood',
-        'HOST': 'localhost',
-        'PASSWORD': 'coderslab',
-        'USER': 'megaz0rd',
-        'PORT': 5432
-    }
-}
 
 TEMPLATES = [
     {
@@ -129,14 +120,11 @@ USE_TZ = True
 
 # Email settings
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'planthood.mokotow@gmail.com'
-EMAIL_HOST_PASSWORD = 'dkzkncjxqsrfrchc'
-EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'planthood.mokotow@gmail.com'
-# EMAIL_USE_SSL = False
+try:
+    from planthood.local_settings import EMAIL_BACKEND, EMAIL_PORT, \
+        EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, EMAIL_USE_TLS, DEFAULT_FROM_EMAIL
+except ModuleNotFoundError:
+    pass
 
 # Rest framework pagination
 
@@ -161,12 +149,12 @@ STATICFILES_DIRS = [
 # Local settings
 
 # try:
-#     from planthood.local_settings import DATABASES
+#     from planthood.local_settings import DATABASE
 # except ModuleNotFoundError:
 #     print("Brak konfiguracji bazy danych w pliku local_settings.py!")
 #     print("Uzupełnij dane i spróbuj ponownie!")
 #     exit(0)
 
 #
-# # Activate Django-Heroku.
-# django_heroku.settings(locals())
+# Activate Django-Heroku.
+django_heroku.settings(locals())
