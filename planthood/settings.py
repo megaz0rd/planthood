@@ -129,14 +129,11 @@ USE_TZ = True
 
 # Email settings
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'planthood.mokotow@gmail.com'
-EMAIL_HOST_PASSWORD = 'dkzkncjxqsrfrchc'
-EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'planthood.mokotow@gmail.com'
-# EMAIL_USE_SSL = False
+try:
+    from planthood.local_settings import EMAIL_BACKEND, EMAIL_PORT, \
+        EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, EMAIL_USE_TLS, DEFAULT_FROM_EMAIL
+except ModuleNotFoundError:
+    pass
 
 # Rest framework pagination
 
@@ -167,6 +164,10 @@ STATICFILES_DIRS = [
 #     print("Uzupełnij dane i spróbuj ponownie!")
 #     exit(0)
 
-#
-# # Activate Django-Heroku.
-# django_heroku.settings(locals())
+GDAL_LIBRARY_PATH = os.environ.get('GDAL_LIBRARY_PATH')
+GEOS_LIBRARY_PATH = os.environ.get('GEOS_LIBRARY_PATH')
+GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY')
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())
+DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
