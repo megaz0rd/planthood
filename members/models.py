@@ -4,6 +4,8 @@ import requests
 from django.db import models
 from django.contrib.auth import get_user_model
 
+from planthood.settings import GOOGLE_MAPS_API_KEY
+
 User = get_user_model()
 
 
