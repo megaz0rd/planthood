@@ -1,4 +1,7 @@
 APScheduler==3.7.0
+asgiref==3.3.4
+attrs==20.3.0
+beautifulsoup4==4.9.3
 bootstrap4==0.1.0
 bpython==0.21
 certifi==2020.12.5
@@ -21,7 +24,6 @@ gunicorn==20.1.0
 idna==2.10
 inflection==0.5.1
 iniconfig==1.1.1
-ipython>2
 mccabe==0.6.1
 packaging==20.9
 pika==1.2.0
@@ -35,7 +37,7 @@ pycodestyle==2.7.0
 pyflakes==2.3.1
 Pygments==2.8.1
 pyparsing==2.4.7
-pytest~=5.4.2
+pytest==6.2.3
 pytest-cov==2.11.1
 pytest-django==4.2.0
 python-dateutil==2.8.1
