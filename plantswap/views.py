@@ -2,6 +2,7 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     UserPassesTestMixin
 )
+from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
@@ -41,22 +42,29 @@ class MainView(ListView):
     paginate_by = 18
 
     def get_queryset(self):
-        """If user is not authenticated shows landing page with a create
-        account button."""
+        """Calculate distance between request.user and plant.owner using
+        PostGIS"""
+        user_location = GEOSGeometry(
+            f'SRID=4326;POINT({self.request.user.userprofile.latitude} '
+            f'{self.request.user.userprofile.longitude})')
+        qs = Plant.objects.annotate(
+            distance=Distance('location', user_location)).order_by('distance')
 
         if not self.request.user.is_authenticated:
+            """If user is not authenticated shows landing page with a create
+            account button."""
             return super().get_queryset()
         else:
+            """Returns query results if none returns all objects."""
             search_query = self.request.GET.get('q')
             if search_query:
-                """Returns query results if none returns all objects."""
-                return self.model.objects.filter(
+                return qs.filter(
                     name__icontains=search_query
                 ).filter(status__in=[1, 2]
                          ).exclude(
                     owner=self.request.user)
             else:
-                return self.model.objects.filter(
+                return qs.filter(
                     status__in=[1, 2]
                 ).exclude(owner=self.request.user)
 
@@ -83,30 +91,19 @@ class PlantDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Plant
     pk_url_kwarg = 'pk'
 
-    def get_distance(self):
-        """Calculate distance between request.user and plant.owner using
-        PostGIS"""
-        try:
-            p1 = GEOSGeometry(
-                f'SRID=4326;POINT({self.request.user.userprofile.latitude} '
-                f'{self.request.user.userprofile.longitude})')
-            p2 = GEOSGeometry(
-                f'SRID=4326;POINT('
-                f'{self.get_object().owner.userprofile.latitude} '
-                f'{self.get_object().owner.userprofile.longitude})')
-            distance = p1.distance(p2)
-            distance_in_km = distance * 100
-            return round(distance_in_km, 2)
-        except Exception:
-            pass
+    def get_object(self):
+        user_location = GEOSGeometry(
+            f'SRID=4326;POINT({self.request.user.userprofile.latitude} '
+            f'{self.request.user.userprofile.longitude})')
+        return Plant.objects.annotate(
+            distance=Distance('location', user_location)).get(
+            pk=self.kwargs.get(self.pk_url_kwarg))
 
     def get_context_data(self, **kwargs):
         """Add an extra key to an object context data"""
 
         context = super(PlantDetailView, self).get_context_data(**kwargs)
-        reminders = self.get_object().reminder_set.all()
-        context['reminders'] = reminders
-        context['distance'] = self.get_distance()
+        context['reminders'] = self.get_object().reminder_set.all()
         return context
 
     def test_func(self):
@@ -246,7 +243,7 @@ class TransactionDetailView(LoginRequiredMixin, UserPassesTestMixin,
         is not a part of"""
 
         return self.request.user == self.get_object().to_user or \
-            self.request.user == self.get_object().from_user
+               self.request.user == self.get_object().from_user
 
 
 class TransactionListView(LoginRequiredMixin, ListView):
@@ -276,7 +273,7 @@ class TransactionDeleteView(LoginRequiredMixin, UserPassesTestMixin,
         is not a part of"""
 
         return self.request.user == self.get_object().to_user or \
-            self.request.user == self.get_object().from_user
+               self.request.user == self.get_object().from_user
 
 
 class TransactionEndView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -312,7 +309,7 @@ class TransactionEndView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         of"""
 
         return self.request.user == self.get_object().from_user or \
-            self.request.user == self.get_object().to_user
+               self.request.user == self.get_object().to_user
 
 
 class ReminderCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):

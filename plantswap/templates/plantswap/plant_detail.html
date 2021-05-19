@@ -31,7 +31,7 @@
 
             <div class="project-info-box">
                 <p><b>Status:</b> {{ object.get_status_display }}</p>
-                <p><b>Odległość:</b> {{ distance }} km</p>
+                <p><b>Odległość:</b> {{ object.distance.km|floatformat:2 }} km</p>
                 <p><b>Właściciel:</b> {{ object.owner.username}}</p>
                 <p><b>Data dodania:</b> {{ object.added }}</p>
             </div><!-- / project-info-box -->

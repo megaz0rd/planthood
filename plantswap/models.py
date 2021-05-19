@@ -1,7 +1,8 @@
 from datetime import timedelta
 
 from django.conf import settings
-from django.db import models
+from django.contrib.gis.db import models
+from django.contrib.gis.geos import Point, GEOSGeometry
 from django.urls import reverse_lazy
 
 from plantswap.constant import CARE_TYPE, STATUS_CHOICE
@@ -16,6 +17,7 @@ class Plant(models.Model):
     status = models.IntegerField(choices=STATUS_CHOICE)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL,
                               on_delete=models.CASCADE)
+    location = models.PointField(geography=True, default=Point(0.0, 0.0))
 
     class Meta:
         ordering = ['name']
@@ -29,6 +31,12 @@ class Plant(models.Model):
     def get_add_to_transaction_url(self):
         return reverse_lazy('plantswap:add-to-transaction',
                             args=[str(self.pk)])
+
+    def save(self, *args, **kwargs):
+        self.location = GEOSGeometry(
+            f'SRID=4326;POINT({self.owner.userprofile.latitude} '
+            f'{self.owner.userprofile.longitude})')
+        super(Plant, self).save(*args, **kwargs)
 
 
 class Message(models.Model):

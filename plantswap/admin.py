@@ -4,8 +4,8 @@ from .models import Plant, Transaction, Reminder, Message
 
 
 class PlantAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'status', 'owner', 'added')
-    search_fields = ('name', 'status', 'owner', 'added')
+    list_display = ('id', 'name', 'status', 'owner', 'added', 'location')
+    search_fields = ('name', 'status', 'owner', 'added', 'location')
     readonly_fields = ('id', 'added')
 
 
