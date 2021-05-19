@@ -44,11 +44,15 @@ class MainView(ListView):
     def get_queryset(self):
         """Calculate distance between request.user and plant.owner using
         PostGIS"""
-        user_location = GEOSGeometry(
-            f'SRID=4326;POINT({self.request.user.userprofile.latitude} '
-            f'{self.request.user.userprofile.longitude})')
-        qs = Plant.objects.annotate(
-            distance=Distance('location', user_location)).order_by('distance')
+        try:
+            user_location = GEOSGeometry(
+                f'SRID=4326;POINT({self.request.user.userprofile.latitude} '
+                f'{self.request.user.userprofile.longitude})')
+            qs = Plant.objects.annotate(
+                distance=Distance('location', user_location)).order_by(
+                'distance')
+        except AttributeError:
+            pass
 
         if not self.request.user.is_authenticated:
             """If user is not authenticated shows landing page with a create
