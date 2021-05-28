@@ -300,7 +300,7 @@ class TransactionEndView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                                  status=3)
         elif plant.status == 2:
             Plant.objects.create(name=plant.name,
-                                 owner=self.get_object().from_user,
+                                 owner=self.get_object().to_user,
                                  photo=plant.photo,
                                  status=3)
         plant.status = 4
