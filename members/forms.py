@@ -40,8 +40,11 @@ class UserRegistrationForm(UserCreationForm):
 
     def clean(self):
         email = self.cleaned_data.get('email')
+        username = self.cleaned_data.get('username')
         if User.objects.filter(email=email).exists():
             raise ValidationError("Konto o podanym adresie e-mail istnieje!")
+        if User.objects.filter(username=username).exists():
+            raise ValidationError("Konto o tej nazwie użytkownika istnieje!")
         return self.cleaned_data
 
 
