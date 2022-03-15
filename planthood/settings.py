@@ -1,5 +1,6 @@
 import os
 import environ
+import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -133,12 +134,12 @@ STATICFILES_DIRS = [
 
 # Local settings
 
-try:
-    from planthood.local_settings import DATABASES
-except ModuleNotFoundError:
-    print("Brak konfiguracji bazy danych w pliku local_settings.py!")
-    print("Uzupełnij dane i spróbuj ponownie!")
-    exit(0)
+# try:
+#     from planthood.local_settings import DATABASES
+# except ModuleNotFoundError:
+#     print("Brak konfiguracji bazy danych w pliku local_settings.py!")
+#     print("Uzupełnij dane i spróbuj ponownie!")
+#     exit(0)
 
 # Postgis settings
 
@@ -147,6 +148,5 @@ GEOS_LIBRARY_PATH = env('GEOS_LIBRARY_PATH')
 GOOGLE_MAPS_API_KEY = env('GOOGLE_MAPS_API_KEY')
 
 # Activate Django-Heroku.
-import django_heroku
 django_heroku.settings(locals())
 DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
