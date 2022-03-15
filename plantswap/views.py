@@ -52,7 +52,7 @@ class MainView(ListView):
                 distance=Distance('location', user_location)).order_by(
                 'distance')
         except AttributeError:
-            pass
+            qs = Plant.objects.all()
 
         if not self.request.user.is_authenticated:
             """If user is not authenticated shows landing page with a create

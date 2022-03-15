@@ -214,7 +214,7 @@ env/*
 venv/*
 .idea/*
 
+# Local settings and copies
 local_settings.py
-
-
-# End of https://www.gitignore.io/api/python,pycharm
+settings_copy.py
+/media
